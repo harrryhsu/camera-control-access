@@ -10,3 +10,5 @@ services:
     - RTSP_URL=rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4
     - NX_URL=http://host.docker.internal:1002/api/drawer
     entrypoint: "node app"
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
