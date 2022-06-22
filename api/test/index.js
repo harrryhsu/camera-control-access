@@ -1,0 +1,39 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+
+const app = express();
+
+const okay = (res, data) => {
+  res.contentType("application/json").status(200).send({
+    status: true,
+    data: data,
+  });
+};
+
+const error = (res) => (msg) => {
+  res.contentType("application/json").status(500).send({
+    status: false,
+    message: msg.toString(),
+    code: "ER_UNKNOWN",
+  });
+};
+
+app.use(bodyParser.json({ limit: "200mb" }));
+app.use(bodyParser.urlencoded({ limit: "200mb", extended: true }));
+
+var drawer = [];
+
+app.get("/api/drawer", (req, res) => {
+  okay(res, drawer);
+});
+
+app.post("/api/drawer", (req, res) => {
+  drawer = req.body;
+  okay(res);
+});
+
+app.use((err, req, res, next) => {
+  error(res)(err);
+});
+
+app.listen(1002, () => console.log(`API server listening on ${1002}`));

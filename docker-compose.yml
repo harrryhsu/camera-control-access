@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  drawer:
+    build: .
+    restart: always
+    ports:
+    - 1000:1000
+    - 1001:1001
+    environment:
+    - RTSP_URL=rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4
+    - NX_URL=http://host.docker.internal:1002/api/drawer
+    entrypoint: "node app"
