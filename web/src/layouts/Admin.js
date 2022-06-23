@@ -152,7 +152,7 @@ const Admin = ({ history, ...rest }) => {
                   }
                   return null;
                 })}
-                <Redirect from="/" to="/admin/general" />
+                <Redirect from="/" to="/admin/traffic" />
               </Switch>
             </div>
           </div>

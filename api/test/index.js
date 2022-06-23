@@ -36,4 +36,4 @@ app.use((err, req, res, next) => {
   error(res)(err);
 });
 
-app.listen(1002, () => console.log(`API server listening on ${1002}`));
+app.listen(1002, () => console.log(`Test NX server listening on ${1002}`));

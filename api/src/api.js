@@ -67,4 +67,6 @@ app.use((err, req, res, next) => {
   error(res)(err);
 });
 
-app.listen(1000, () => console.log(`API server listening on ${1000}`));
+module.exports = app.listen(1000, () =>
+  console.log(`API/WS server listening on ${1000}`)
+);

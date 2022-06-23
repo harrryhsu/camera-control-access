@@ -63,7 +63,7 @@ ReactDOM.render(
         <BrowserRouter>
           <Switch>
             <Route path="/admin" component={Admin} />
-            <Redirect from="/" to="/admin/general" />
+            <Redirect from="/" to="/admin/traffic" />
           </Switch>
         </BrowserRouter>
       </CookiesProvider>

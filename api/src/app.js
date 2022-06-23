@@ -1,4 +1,2 @@
 require("dotenv").config();
-
-require("./api");
-require("./stream");
+require("./stream")(require("./api"));

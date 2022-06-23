@@ -59,7 +59,10 @@ function jsonUnwrap(req) {
 const baseUrl =
   process.env.NODE_ENV == "development" ? "http://localhost:1000" : "";
 
-const wsUrl = "ws://" + window.location.hostname + ":" + 1001 + "/live";
+const wsUrl =
+  process.env.NODE_ENV == "development"
+    ? "ws://localhost:1000/live"
+    : "ws://" + window.location.hostname + ":" + window.location.port + "/live";
 
 export const ApiWrapper = () => {
   function get(path, body) {
