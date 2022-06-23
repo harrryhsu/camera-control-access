@@ -3,8 +3,6 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const axios = require("axios");
 
-const { NX_URL } = process.env;
-
 const app = express();
 
 const okay = (res, data) => {
@@ -49,7 +47,8 @@ const targets = Object.keys(process.env)
       ...acc,
       [parseInt(v.replace("NX_URL_", ""))]: {
         name: process.env[v.replace("NX_URL_", "NAME_")],
-        api: process.env[v.replace("NX_URL_", "NX_URL_")],
+        api: process.env[v],
+        rtsp: process.env[v.replace("NX_URL_", "RTSP_URL_")],
       },
     }),
     {}
