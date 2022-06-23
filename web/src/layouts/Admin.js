@@ -11,8 +11,6 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Navbar from "components/Navbars/Navbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
-import routes from "routes.js";
-
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
 import bgImage from "assets/img/background.jpg";
@@ -22,7 +20,8 @@ import { UtilProvider } from "context/UtilContext";
 import translation from "translation/zh_tw";
 import { Dialog, Snackbar } from "@material-ui/core";
 import { ApiWrapper } from "api/api";
-import Progress from "components/Setting/Progress";
+import Dashboard from "@material-ui/icons/Dashboard";
+import Traffic from "views/Traffic/Traffic";
 
 let ps;
 
@@ -40,6 +39,7 @@ const Admin = ({ history, ...rest }) => {
     lock: false,
     container: undefined,
   });
+  const [metadata, setMetadata] = useState({ targets: {} });
   const api = ApiWrapper();
 
   const handleDrawerToggle = () => {
@@ -59,6 +59,19 @@ const Admin = ({ history, ...rest }) => {
       ]);
   };
   const setSuccess = (msg) => setMessage(["success", msg]);
+
+  const routes = Object.keys(metadata.targets).map((id) => ({
+    path: `/traffic/${id}`,
+    name: "Traffic: " + metadata.targets[id].name,
+    icon: Dashboard,
+    component: Traffic,
+    layout: "/admin",
+    isLoaded: true,
+  }));
+
+  useEffect(() => {
+    api.GetMetadata().then(setMetadata).catch(setError);
+  }, []);
 
   // initialize and destroy the PerfectScrollbar plugin
   useEffect(() => {
@@ -137,25 +150,27 @@ const Admin = ({ history, ...rest }) => {
             handleDrawerToggle={handleDrawerToggle}
             {...rest}
           />
-          <div className={classes.content}>
-            <div className={classes.container}>
-              <Switch onChange={console.log}>
-                {routes.map((prop, key) => {
-                  if (prop.layout === "/admin") {
-                    return (
-                      <Route
-                        path={prop.layout + prop.path}
-                        component={prop.component}
-                        key={key}
-                      />
-                    );
-                  }
-                  return null;
-                })}
-                <Redirect from="/" to="/admin/traffic" />
-              </Switch>
+          {Object.keys(metadata.targets).length ? (
+            <div className={classes.content}>
+              <div className={classes.container}>
+                <Switch>
+                  {routes.map((prop, key) => {
+                    if (prop.layout === "/admin") {
+                      return (
+                        <Route
+                          path={prop.layout + prop.path}
+                          component={prop.component}
+                          key={key}
+                        />
+                      );
+                    }
+                    return null;
+                  })}
+                  <Redirect from="/" to={"/admin/traffic/1"} />
+                </Switch>
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
       </div>
     </UtilProvider>

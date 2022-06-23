@@ -21,14 +21,16 @@ const error = (res) => (msg) => {
 app.use(bodyParser.json({ limit: "200mb" }));
 app.use(bodyParser.urlencoded({ limit: "200mb", extended: true }));
 
-var drawer = [];
+var drawer = {};
 
-app.get("/api/drawer", (req, res) => {
-  okay(res, drawer);
+app.get("/api/drawer/:id", (req, res) => {
+  const id = req.params.id;
+  okay(res, drawer[id] ?? []);
 });
 
-app.post("/api/drawer", (req, res) => {
-  drawer = req.body;
+app.post("/api/drawer/:id", (req, res) => {
+  const id = req.params.id;
+  drawer[id] = req.body;
   okay(res);
 });
 

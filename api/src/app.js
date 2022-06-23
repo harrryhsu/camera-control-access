@@ -1,2 +1,3 @@
 require("dotenv").config();
-require("./stream")(require("./api"));
+const express = require("./api");
+require("./stream")(express);

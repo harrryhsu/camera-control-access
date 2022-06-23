@@ -5,7 +5,6 @@ const ffmpegPath = process.env.OS === "WINDOWS_NT" ? "./ffmpeg.exe" : "ffmpeg";
 module.exports = (express) => {
   const wsServer = new ws.Server({
     noServer: true,
-    path: "/live",
     perMessageDeflate: false,
   });
 
@@ -36,15 +35,17 @@ module.exports = (express) => {
     return results;
   };
 
-  const { RTSP_URL } = process.env;
-
-  if (!RTSP_URL) throw "Missing url";
-  const stream = new Stream({
-    name: "MAIN",
-    streamUrl: RTSP_URL,
-    path: "/live",
-    ffmpegPath,
-    wsServer,
-  });
-  stream.on("exit", () => process.exit(1));
+  Object.keys(process.env)
+    .filter((x) => x.startsWith("RTSP_URL_"))
+    .forEach((key) => {
+      const id = parseInt(key.replace("RTSP_URL_", ""));
+      const stream = new Stream({
+        name: key,
+        streamUrl: process.env[key],
+        path: `/live/${id}`,
+        ffmpegPath,
+        wsServer,
+      });
+      stream.on("exit", () => process.exit(1));
+    });
 };

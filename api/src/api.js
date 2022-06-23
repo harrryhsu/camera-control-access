@@ -42,16 +42,35 @@ app.use(function (req, res, next) {
   next();
 });
 
+const targets = Object.keys(process.env)
+  .filter((x) => x.startsWith("NX_URL_"))
+  .reduce(
+    (acc, v) => ({
+      ...acc,
+      [parseInt(v.replace("NX_URL_", ""))]: {
+        name: process.env[v.replace("NX_URL_", "NAME_")],
+        api: process.env[v.replace("NX_URL_", "NX_URL_")],
+      },
+    }),
+    {}
+  );
+
+app.get("/api/metadata", (req, res) => {
+  okay(res, { targets });
+});
+
 app.get("/api/drawer", (req, res) => {
+  const { id } = req.query;
   axios
-    .get(NX_URL)
+    .get(targets[id].api)
     .then(({ data }) => okay(res, data.data))
     .catch(error);
 });
 
 app.post("/api/drawer", (req, res) => {
+  const { id, data } = req.body;
   axios
-    .post(NX_URL, req.body)
+    .post(targets[id].api, data)
     .then(() => okay(res))
     .catch(error);
 });

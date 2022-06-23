@@ -6,8 +6,12 @@ services:
     ports:
     - 1000:1000
     environment:
-    - RTSP_URL=rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4
-    - NX_URL=http://host.docker.internal:1002/api/drawer
+    - RTSP_URL_1=rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4
+    - NX_URL_1=http://host.docker.internal:1002/api/drawer/1
+    - NAME_1=TEST1
+    - RTSP_URL_2=rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4
+    - NX_URL_2=http://host.docker.internal:1002/api/drawer/2
+    - NAME_2=TEST2
     entrypoint: "node app"
     extra_hosts:
     - "host.docker.internal:host-gateway"

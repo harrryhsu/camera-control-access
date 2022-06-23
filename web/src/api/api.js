@@ -82,8 +82,9 @@ export const ApiWrapper = () => {
   }
 
   return {
-    WebRTCUrl: wsUrl,
-    GetDrawerConfig: () => get("drawer"),
+    WebRTCUrl: (id) => wsUrl + `/${id}`,
+    GetDrawerConfig: (id) => get(`drawer?id=${id}`),
     SetDrawerConfig: (data) => post("drawer", data),
+    GetMetadata: () => get("metadata"),
   };
 };

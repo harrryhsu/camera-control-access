@@ -7,14 +7,16 @@ import CardFooter from "components/Card/CardFooter.js";
 import Drawer from "./Drawer";
 
 const Video = (props) => {
+  const pathSeg = window.location.pathname.split("/");
+  const id = parseInt(pathSeg[pathSeg.length - 1]);
   return (
     <>
-      <GridContainer>
+      <GridContainer key={id}>
         <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardBody style={{ padding: "0 40px" }}>
               <GridContainer style={{ marginTop: "-20px" }}>
-                <Drawer />
+                <Drawer id={id} />
               </GridContainer>
             </CardBody>
           </Card>
