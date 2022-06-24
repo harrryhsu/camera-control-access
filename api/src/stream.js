@@ -1,20 +1,7 @@
 const Stream = require("./node-rtsp-stream");
 const ws = require("ws");
 const ffmpegPath = process.env.OS === "WINDOWS_NT" ? "./ffmpeg.exe" : "ffmpeg";
-
-const targets = Object.keys(process.env)
-  .filter((x) => x.startsWith("NX_URL_"))
-  .reduce(
-    (acc, v) => ({
-      ...acc,
-      [parseInt(v.replace("NX_URL_", ""))]: {
-        name: process.env[v.replace("NX_URL_", "NAME_")],
-        api: process.env[v],
-        rtsp: process.env[v.replace("NX_URL_", "RTSP_URL_")],
-      },
-    }),
-    {}
-  );
+const config = require("./config");
 
 module.exports = (express) => {
   const wsServer = new ws.Server({
@@ -48,11 +35,12 @@ module.exports = (express) => {
     }
     return results;
   };
+  const { APIS } = config;
 
-  Object.keys(targets).forEach((id) => {
+  Object.keys(APIS).forEach((id) => {
     const stream = new Stream({
-      name: targets[id].name,
-      streamUrl: targets[id].rtsp,
+      name: APIS[id].name,
+      streamUrl: APIS[id].rtsp,
       path: `/live/${id}`,
       ffmpegPath,
       wsServer,

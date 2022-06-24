@@ -35,9 +35,7 @@ export default function AddShapeDialog(props) {
     currentShapeKey ?? "placeholder"
   );
   const {
-    metadata: {
-      config: { OPTIONS },
-    },
+    metadata: { OPTIONS },
   } = useContext(UtilContext);
   const shape = OPTIONS[shapeKey];
 

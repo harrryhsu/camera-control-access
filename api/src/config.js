@@ -173,8 +173,22 @@ const SCREEN_SIZE = [
   [1600, 900],
 ];
 
+const APIS = [
+  {
+    name: "TEST1",
+    api: "http://host.docker.internal:1002/api/drawer/1",
+    rtsp: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4",
+  },
+  {
+    name: "TEST2",
+    api: "http://host.docker.internal:1002/api/drawer/2",
+    rtsp: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4",
+  },
+];
+
 module.exports = {
   SCREEN_SIZE,
   DEFAULT,
   OPTIONS,
+  APIS,
 };

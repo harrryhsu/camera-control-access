@@ -41,28 +41,14 @@ app.use(function (req, res, next) {
   next();
 });
 
-const targets = Object.keys(process.env)
-  .filter((x) => x.startsWith("NX_URL_"))
-  .reduce(
-    (acc, v) => ({
-      ...acc,
-      [parseInt(v.replace("NX_URL_", ""))]: {
-        name: process.env[v.replace("NX_URL_", "NAME_")],
-        api: process.env[v],
-        rtsp: process.env[v.replace("NX_URL_", "RTSP_URL_")],
-      },
-    }),
-    {}
-  );
-
 app.get("/api/metadata", (req, res) => {
-  okay(res, { targets, config });
+  okay(res, { ...config });
 });
 
 app.get("/api/drawer", (req, res) => {
   const { id } = req.query;
   axios
-    .get(targets[id].api)
+    .get(config.APIS[id].api)
     .then(({ data }) => okay(res, data.data))
     .catch(error);
 });
@@ -70,7 +56,7 @@ app.get("/api/drawer", (req, res) => {
 app.post("/api/drawer", (req, res) => {
   const { id, data } = req.body;
   axios
-    .post(targets[id].api, data)
+    .post(config.APIS[id].api, data)
     .then(() => okay(res))
     .catch(error);
 });

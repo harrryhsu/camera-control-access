@@ -39,7 +39,7 @@ const Admin = ({ history, ...rest }) => {
     lock: false,
     container: undefined,
   });
-  const [metadata, setMetadata] = useState({ targets: {} });
+  const [metadata, setMetadata] = useState({ APIS: {} });
   const api = ApiWrapper();
 
   const handleDrawerToggle = () => {
@@ -60,9 +60,9 @@ const Admin = ({ history, ...rest }) => {
   };
   const setSuccess = (msg) => setMessage(["success", msg]);
 
-  const routes = Object.keys(metadata.targets).map((id) => ({
+  const routes = Object.keys(metadata.APIS).map((id) => ({
     path: `/traffic/${id}`,
-    name: "Traffic: " + metadata.targets[id].name,
+    name: "Traffic: " + metadata.APIS[id].name,
     icon: Dashboard,
     component: Traffic,
     layout: "/admin",
@@ -151,7 +151,7 @@ const Admin = ({ history, ...rest }) => {
             handleDrawerToggle={handleDrawerToggle}
             {...rest}
           />
-          {Object.keys(metadata.targets).length ? (
+          {Object.keys(metadata.APIS).length ? (
             <div className={classes.content}>
               <div className={classes.container}>
                 <Switch>

@@ -42,9 +42,7 @@ export default function Drawer({ id }) {
     setSuccess,
     api,
     setDialogSrc,
-    metadata: {
-      config: { SCREEN_SIZE, OPTIONS, DEFAULT },
-    },
+    metadata: { SCREEN_SIZE, OPTIONS, DEFAULT },
   } = useContext(UtilContext);
 
   const [shapeData, setShapeData, shapeDataRef] = useState([]);
