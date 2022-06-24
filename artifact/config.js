@@ -1,4 +1,4 @@
-export const OPERATE_CLASS_ID_OPTIONS = {
+const OPERATE_CLASS_ID_OPTIONS = {
   0: "Car",
   1: "Motor",
   2: "Truck",
@@ -6,7 +6,7 @@ export const OPERATE_CLASS_ID_OPTIONS = {
   4: "Bus",
 };
 
-export const LINE_MODE = {
+const LINE_MODE = {
   loose: "Loose",
   balanced: "Balanced",
   strict: "Strict",
@@ -19,7 +19,7 @@ const DEFAULT_FIELDS = {
   },
 };
 
-export const OPTIONS = {
+const OPTIONS = {
   checkpoint: {
     name: "Checkpoint",
     type: "line_directed",
@@ -147,7 +147,7 @@ export const OPTIONS = {
   },
 };
 
-export const DEFAULT = {
+const DEFAULT = {
   line: [
     { x: 50, y: 30 },
     { x: 50, y: 80 },
@@ -168,7 +168,13 @@ export const DEFAULT = {
   rect: [{ x: 150, y: 30 }, 200, 200],
 };
 
-export const SCREEN_SIZE = [
+const SCREEN_SIZE = [
   [1280, 720],
   [1600, 900],
 ];
+
+module.exports = {
+  SCREEN_SIZE,
+  DEFAULT,
+  OPTIONS,
+};

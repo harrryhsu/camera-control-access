@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const axios = require("axios");
+const config = require("./config");
 
 const app = express();
 
@@ -55,7 +56,7 @@ const targets = Object.keys(process.env)
   );
 
 app.get("/api/metadata", (req, res) => {
-  okay(res, { targets });
+  okay(res, { targets, config });
 });
 
 app.get("/api/drawer", (req, res) => {

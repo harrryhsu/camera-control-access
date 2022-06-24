@@ -105,6 +105,7 @@ const Admin = ({ history, ...rest }) => {
             container: container ?? undefined,
           }),
         api,
+        metadata,
       }}
     >
       <div className={classes.wrapper}>

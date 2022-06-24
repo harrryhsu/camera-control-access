@@ -10,6 +10,9 @@ module.exports = {
     path: path.resolve(__dirname, "build"),
   },
   mode: "production",
+  externals: {
+    "./config": "commonjs ./config",
+  },
   plugins: [
     new WebpackObfuscator({
       compact: true,

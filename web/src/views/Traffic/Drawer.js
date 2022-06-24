@@ -11,7 +11,6 @@ import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import { v4 as uuidv4 } from "uuid";
 import { Fab, IconButton, Tooltip } from "@material-ui/core";
 import WebRTCPlayer from "./WebRTCPlayer";
-import { OPTIONS, DEFAULT, SCREEN_SIZE } from "./Config";
 import {
   DetectionLine,
   DetectionLineWithDirection,
@@ -38,7 +37,15 @@ const scale = (value, factor, toPixel) =>
   toPixel ? value * factor : value / factor;
 
 export default function Drawer({ id }) {
-  const { setError, setSuccess, api, setDialogSrc } = useContext(UtilContext);
+  const {
+    setError,
+    setSuccess,
+    api,
+    setDialogSrc,
+    metadata: {
+      config: { SCREEN_SIZE, OPTIONS, DEFAULT },
+    },
+  } = useContext(UtilContext);
 
   const [shapeData, setShapeData, shapeDataRef] = useState([]);
   const [videoSize, setVideoSize, videoSizeRef] = useState(0);

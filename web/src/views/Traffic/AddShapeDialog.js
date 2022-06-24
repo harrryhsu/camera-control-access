@@ -9,7 +9,6 @@ import { UtilContext } from "context/UtilContext";
 import Select from "components/CustomInput/Select";
 import Range from "components/CustomInput/Range";
 import MultiSelect from "components/CustomInput/MultiSelect";
-import { OPTIONS } from "./Config";
 import Text from "components/CustomInput/Text";
 
 const mapFieldDefault = (fieldDef) => {
@@ -35,6 +34,11 @@ export default function AddShapeDialog(props) {
   const [shapeKey, setShapeKey, shapeKeyRef] = useState(
     currentShapeKey ?? "placeholder"
   );
+  const {
+    metadata: {
+      config: { OPTIONS },
+    },
+  } = useContext(UtilContext);
   const shape = OPTIONS[shapeKey];
 
   useEffect(() => {
