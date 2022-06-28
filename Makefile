@@ -1,3 +1,4 @@
+all: build deploy
 build: 
 	docker build . -t harryhsu4/detection-drawer:latest
 deploy:
