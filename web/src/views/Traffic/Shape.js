@@ -52,122 +52,6 @@ const moveToDistance = (origin, target, distance) => {
 
 const STROKE_WIDTH = 3;
 
-export const DetectionLineWithDirection1 = (props) => {
-  const { pts, setPts, name, onClick } = props;
-  var [p1, p2, p3, p4] = pts;
-  const center = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
-  if (!p3) p3 = moveToDistance(center, rotate(center, p1, 90), 25);
-  const length = distance(center, p3);
-  p4 = moveToDistance(center, p3, -length);
-
-  return (
-    <>
-      <Line
-        x={p3.x}
-        y={p3.y}
-        points={[0, 0, p4.x - p3.x, p4.y - p3.y]}
-        tension={0.5}
-        closed
-        stroke="yellow"
-        strokeWidth={STROKE_WIDTH}
-        onClick={onClick}
-      />
-      <Circle
-        x={p3.x}
-        y={p3.y}
-        radius={5}
-        fill="blue"
-        onDragMove={(e) => {
-          const target = { x: e.target.attrs.x, y: e.target.attrs.y };
-          const length = distance(center, target);
-          const p4 = moveToDistance(center, target, -length);
-          setPts([
-            ...pts.slice(0, 2),
-            { x: target.x, y: target.y },
-            { x: p4.x, y: p4.y },
-          ]);
-        }}
-        draggable
-      />
-      <Circle x={p4.x} y={p4.y} radius={5} fill="red" />
-      <Line
-        x={p1.x}
-        y={p1.y}
-        points={[0, 0, p2.x - p1.x, p2.y - p1.y]}
-        tension={0.5}
-        closed
-        stroke="yellow"
-        strokeWidth={STROKE_WIDTH}
-        onDragMove={(e) =>
-          setPts([
-            { x: e.target.attrs.x, y: e.target.attrs.y },
-            {
-              x: e.target.attrs.x + p2.x - p1.x,
-              y: e.target.attrs.y + p2.y - p1.y,
-            },
-            {
-              x: e.target.attrs.x + p3.x - p1.x,
-              y: e.target.attrs.y + p3.y - p1.y,
-            },
-            {
-              x: e.target.attrs.x + p4.x - p1.x,
-              y: e.target.attrs.y + p4.y - p1.y,
-            },
-          ])
-        }
-        draggable
-        onClick={onClick}
-      />
-      <Circle
-        x={p1.x}
-        y={p1.y}
-        radius={5}
-        fill="red"
-        onDragMove={(e) => {
-          const current = { x: e.target.attrs.x, y: e.target.attrs.y };
-          const currentCenter = {
-            x: (current.x + p2.x) / 2,
-            y: (current.y + p2.y) / 2,
-          };
-          const angle = angleBetween(center, p1, p3);
-          const tp = rotate(currentCenter, current, angle);
-          const np3 = moveToDistance(currentCenter, tp, length);
-          const np4 = moveToDistance(currentCenter, tp, -length);
-          setPts([current, pts[1], np3, np4]);
-        }}
-        draggable
-      />
-      <Circle
-        x={p2.x}
-        y={p2.y}
-        radius={5}
-        fill="red"
-        onDragMove={(e) => {
-          const current = { x: e.target.attrs.x, y: e.target.attrs.y };
-          const currentCenter = {
-            x: (current.x + p1.x) / 2,
-            y: (current.y + p1.y) / 2,
-          };
-          const angle = angleBetween(center, p1, p3);
-          const tp = rotate(currentCenter, p1, angle);
-          const np3 = moveToDistance(currentCenter, tp, length);
-          const np4 = moveToDistance(currentCenter, tp, -length);
-          setPts([pts[0], current, np3, np4]);
-        }}
-        draggable
-      />
-      <Text
-        text={name}
-        fontSize={15}
-        x={center.x + 10}
-        y={center.y + 10}
-        fill="white"
-        listening={false}
-      />
-    </>
-  );
-};
-
 export const DetectionLineWithDirection = (props) => {
   const { pts, setPts, name, onClick } = props;
   var [p1, p2, p3, p4] = pts;
@@ -198,9 +82,10 @@ export const DetectionLineWithDirection = (props) => {
           const length = distance(center, target);
           const p1 = moveToDistance(center, target, -length);
           setPts([
-            ...pts.slice(0, 2),
-            { x: target.x, y: target.y },
             { x: p1.x, y: p1.y },
+            { x: target.x, y: target.y },
+            pts[2],
+            pts[3],
           ]);
         }}
         draggable
@@ -216,18 +101,18 @@ export const DetectionLineWithDirection = (props) => {
         strokeWidth={STROKE_WIDTH}
         onDragMove={(e) =>
           setPts([
-            { x: e.target.attrs.x, y: e.target.attrs.y },
             {
-              x: e.target.attrs.x + p4.x - p3.x,
-              y: e.target.attrs.y + p4.y - p3.y,
+              x: e.target.attrs.x + p1.x - p3.x,
+              y: e.target.attrs.y + p1.y - p3.y,
             },
             {
               x: e.target.attrs.x + p2.x - p3.x,
               y: e.target.attrs.y + p2.y - p3.y,
             },
+            { x: e.target.attrs.x, y: e.target.attrs.y },
             {
-              x: e.target.attrs.x + p1.x - p3.x,
-              y: e.target.attrs.y + p1.y - p3.y,
+              x: e.target.attrs.x + p4.x - p3.x,
+              y: e.target.attrs.y + p4.y - p3.y,
             },
           ])
         }
@@ -249,7 +134,7 @@ export const DetectionLineWithDirection = (props) => {
           const tp = rotate(currentCenter, current, angle);
           const np2 = moveToDistance(currentCenter, tp, length);
           const np1 = moveToDistance(currentCenter, tp, -length);
-          setPts([current, pts[1], np2, np1]);
+          setPts([np1, np2, current, p4]);
         }}
         draggable
       />
@@ -268,7 +153,7 @@ export const DetectionLineWithDirection = (props) => {
           const tp = rotate(currentCenter, p3, angle);
           const np2 = moveToDistance(currentCenter, tp, length);
           const np1 = moveToDistance(currentCenter, tp, -length);
-          setPts([pts[0], current, np2, np1]);
+          setPts([np1, np2, p3, current]);
         }}
         draggable
       />
