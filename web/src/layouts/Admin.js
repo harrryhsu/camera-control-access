@@ -62,7 +62,7 @@ const Admin = ({ history, ...rest }) => {
 
   const routes = Object.keys(metadata.APIS).map((id) => ({
     path: `/traffic/${id}`,
-    name: "Traffic: " + metadata.APIS[id].name,
+    name: metadata.APIS[id].name,
     icon: Dashboard,
     component: Traffic,
     layout: "/admin",
