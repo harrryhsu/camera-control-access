@@ -1,3 +1,8 @@
 require("dotenv").config();
-const express = require("./api");
-require("./stream")(express);
+
+require("./storage")
+  .init()
+  .then(() => {
+    const express = require("./api");
+    require("./stream")(express);
+  });

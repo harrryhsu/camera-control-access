@@ -30,7 +30,9 @@ app.get("/api/drawer/:id", (req, res) => {
 
 app.post("/api/drawer/:id", (req, res) => {
   const id = req.params.id;
-  drawer[id] = req.body;
+  const { data, shapes } = req.body;
+  drawer[id] = shapes;
+  console.log(data);
   okay(res);
 });
 

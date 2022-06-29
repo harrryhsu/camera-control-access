@@ -31,10 +31,18 @@ VideoStream = function (options) {
 
 util.inherits(VideoStream, events.EventEmitter);
 
+VideoStream.prototype.kill = function () {
+  this.stop();
+  this.removeAllListeners();
+  return this;
+};
+
 VideoStream.prototype.stop = function () {
   if (!this.inputStreamStarted) return;
   console.log(`${this.name}: Stopping stream`);
   this.stream?.kill();
+  this.stream?.removeAllListeners();
+  this.mpeg1Muxer.removeAllListeners();
   this.inputStreamStarted = false;
   this.emit("stop");
   return this;
@@ -44,7 +52,6 @@ VideoStream.prototype.validate = function () {
   const handle = setInterval(() => {
     if (Date.now() - this.lastUpdated > 10000 && this.inputStreamStarted) {
       console.log(`${this.name}: ffmpeg timeout, exiting...`);
-      this.mpeg1Muxer.removeAllListeners();
       this.emit("exit");
       this.stop();
       this.start();

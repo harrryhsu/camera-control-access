@@ -190,5 +190,5 @@ module.exports = {
   SCREEN_SIZE,
   DEFAULT,
   OPTIONS,
-  APIS,
+  // APIS,
 };

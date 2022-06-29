@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, {useState, useContext, useEffect} from "react";
+import React, { useState, useContext, useEffect } from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { NavLink, useLocation } from "react-router-dom";
@@ -29,15 +29,15 @@ export default function Sidebar(props) {
     return location.pathname === routeName;
   }
   const { color, logo, image, logoText, routes } = props;
-	
+
   var links = (
     <List className={classes.list}>
       {routes.map((prop, key) => {
         var activePro = " ";
         var listItemClasses;
         listItemClasses = classNames({
-					[" " + classes[color]]: activeRoute(prop.layout + prop.path),
-				});
+          [" " + classes[color]]: activeRoute(prop.layout + prop.path),
+        });
         const whiteFontClasses = classNames({
           [" " + classes.whiteFont]: activeRoute(prop.layout + prop.path),
         });
@@ -47,7 +47,13 @@ export default function Sidebar(props) {
             className={activePro + classes.item}
             activeClassName="active"
             key={key}
-						onClick={(e) => activeRoute(prop.layout + prop.path) && e.preventDefault() }
+            onClick={(e) => {
+              if (prop.onClick) {
+                e.preventDefault();
+                prop.onClick();
+              } else if (activeRoute(prop.layout + prop.path))
+                e.preventDefault();
+            }}
           >
             <ListItem button className={classes.itemLink + listItemClasses}>
               {typeof prop.icon === "string" ? (
@@ -71,7 +77,9 @@ export default function Sidebar(props) {
                   [classes.itemTextRTL]: props.rtlActive,
                 })}
                 disableTypography={true}
+                style={{ minHeight: 30 }}
               />
+              {prop.suffix ? prop.suffix() : null}
             </ListItem>
           </NavLink>
         );
@@ -79,21 +87,21 @@ export default function Sidebar(props) {
     </List>
   );
   var brand = (
-		<>
-			<div className={classes.logo}>
-				<a
-					href="#"
-					className={classNames(classes.logoLink, {
-						[classes.logoLinkRTL]: props.rtlActive,
-					})}
-					target="_blank"
-					style={{height: "40px"}}
-					onClick={e => e.preventDefault()}
-				>
-					<img src={logo} alt="logo" width="100%" />
-				</a>
-			</div>
-		</>
+    <>
+      <div className={classes.logo}>
+        <a
+          href="#"
+          className={classNames(classes.logoLink, {
+            [classes.logoLinkRTL]: props.rtlActive,
+          })}
+          target="_blank"
+          style={{ height: "40px" }}
+          onClick={(e) => e.preventDefault()}
+        >
+          <img src={logo} alt="logo" width="100%" />
+        </a>
+      </div>
+    </>
   );
   return (
     <div>

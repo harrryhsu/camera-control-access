@@ -1,0 +1,1 @@
+{"key":"STREAM","value":[{"rtsp":"rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4","api":"http://host.docker.internal:1002/api/drawer/1","name":"Test 1","locationIndex":"0","cameraIndex":"0"}]}

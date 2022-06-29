@@ -6,7 +6,6 @@ import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
 // core components
 import Navbar from "components/Navbars/Navbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
@@ -18,10 +17,13 @@ import logo from "assets/img/logo2.png";
 import { Alert } from "components/Alert/Alert";
 import { UtilProvider } from "context/UtilContext";
 import translation from "translation/zh_tw";
-import { Dialog, Snackbar } from "@material-ui/core";
+import { Dialog } from "@material-ui/core";
 import { ApiWrapper } from "api/api";
 import Dashboard from "@material-ui/icons/Dashboard";
 import Traffic from "views/Traffic/Traffic";
+import AddStream from "./AddStream";
+import CachedIcon from "@material-ui/icons/Cached";
+import { IconButton } from "@material-ui/core";
 
 let ps;
 
@@ -39,7 +41,7 @@ const Admin = ({ history, ...rest }) => {
     lock: false,
     container: undefined,
   });
-  const [metadata, setMetadata] = useState({ APIS: {} });
+  const [metadata, setMetadata] = useState({ STREAM: {} });
   const api = ApiWrapper();
 
   const handleDrawerToggle = () => {
@@ -60,17 +62,79 @@ const Admin = ({ history, ...rest }) => {
   };
   const setSuccess = (msg) => setMessage(["success", msg]);
 
-  const routes = Object.keys(metadata.APIS).map((id) => ({
-    path: `/traffic/${id}`,
-    name: metadata.APIS[id].name,
-    icon: Dashboard,
-    component: Traffic,
-    layout: "/admin",
-    isLoaded: true,
-  }));
+  const getMetadata = () => api.GetMetadata().then(setMetadata).catch(setError);
+
+  const routes = [
+    ...Object.keys(metadata.STREAM).map((id) => ({
+      path: `/traffic/${id}`,
+      name: metadata.STREAM[id].name,
+      icon: Dashboard,
+      component: Traffic,
+      layout: "/admin",
+      isLoaded: true,
+      suffix: () => (
+        <IconButton
+          style={{ position: "absolute", right: 0, top: 0 }}
+          onClick={(e) => {
+            e.preventDefault();
+            setDialogSrc({
+              src: () => (
+                <>
+                  <AddStream
+                    existingForm={metadata.STREAM[id]}
+                    onUpdate={(form) => {
+                      api
+                        .PostStream({ stream: form, id })
+                        .then(() => {
+                          setDialogSrc({ src: null });
+                          getMetadata();
+                        })
+                        .catch(setError);
+                    }}
+                    onDelete={() =>
+                      api
+                        .DeleteStream({ id })
+                        .then(() => getMetadata())
+                        .then(() => setDialogSrc({ src: null }))
+                        .catch(setError)
+                    }
+                  />
+                </>
+              ),
+            });
+          }}
+        >
+          <CachedIcon />
+        </IconButton>
+      ),
+    })),
+    {
+      name: "Add",
+      icon: Dashboard,
+      layout: "/admin",
+      isLoaded: true,
+      onClick: () => {
+        setDialogSrc({
+          src: () => (
+            <AddStream
+              onSubmit={(form) => {
+                api
+                  .PutStream(form)
+                  .then(() => {
+                    setDialogSrc({ src: null });
+                    getMetadata();
+                  })
+                  .catch(setError);
+              }}
+            />
+          ),
+        });
+      },
+    },
+  ];
 
   useEffect(() => {
-    api.GetMetadata().then(setMetadata).catch(setError);
+    getMetadata();
   }, []);
 
   // initialize and destroy the PerfectScrollbar plugin
@@ -151,7 +215,7 @@ const Admin = ({ history, ...rest }) => {
             handleDrawerToggle={handleDrawerToggle}
             {...rest}
           />
-          {Object.keys(metadata.APIS).length ? (
+          {Object.keys(metadata.STREAM).length ? (
             <div className={classes.content}>
               <div className={classes.container}>
                 <Switch>
@@ -167,7 +231,7 @@ const Admin = ({ history, ...rest }) => {
                     }
                     return null;
                   })}
-                  <Redirect from="/" to={"/admin/traffic/1"} />
+                  <Redirect from="/" to={"/admin/traffic/0"} />
                 </Switch>
               </div>
             </div>

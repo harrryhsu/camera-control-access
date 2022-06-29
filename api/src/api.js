@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const axios = require("axios");
 const config = require("./config");
+const storage = require("./storage");
 
 const app = express();
 
@@ -41,22 +42,48 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get("/api/metadata", (req, res) => {
-  okay(res, { ...config });
+app.get("/api/metadata", async (req, res) => {
+  const stream = (await storage.getItem("STREAM")) ?? [];
+  okay(res, { ...config, STREAM: stream });
 });
 
-app.get("/api/drawer", (req, res) => {
+app.put("/api/stream", async (req, res) => {
+  const stream = req.body;
+  const existing = (await storage.getItem("STREAM")) ?? [];
+  await storage.setItem("STREAM", [...existing, stream]);
+  okay(res);
+});
+
+app.post("/api/stream", async (req, res) => {
+  const { stream, id } = req.body;
+  const existing = (await storage.getItem("STREAM")) ?? [];
+  existing[id] = stream;
+  await storage.setItem("STREAM", existing);
+  okay(res);
+});
+
+app.delete("/api/stream", async (req, res) => {
+  const { id } = req.body;
+  const existing = (await storage.getItem("STREAM")) ?? [];
+  existing.splice(id, 1);
+  await storage.setItem("STREAM", existing);
+  okay(res);
+});
+
+app.get("/api/drawer", async (req, res) => {
   const { id } = req.query;
+  const streams = (await storage.getItem("STREAM")) ?? [];
   axios
-    .get(config.APIS[id].api)
+    .get(streams[id].api)
     .then(({ data }) => okay(res, data.data))
     .catch(error);
 });
 
-app.post("/api/drawer", (req, res) => {
+app.post("/api/drawer", async (req, res) => {
   const { id, data } = req.body;
+  const streams = (await storage.getItem("STREAM")) ?? [];
   axios
-    .post(config.APIS[id].api, data)
+    .post(streams[id].api, { data: streams[id], shapes: data })
     .then(() => okay(res))
     .catch(error);
 });

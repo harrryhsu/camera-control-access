@@ -3,12 +3,12 @@ import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
-import CardFooter from "components/Card/CardFooter.js";
 import Drawer from "./Drawer";
 
-const Video = (props) => {
+const Traffic = (props) => {
   const pathSeg = window.location.pathname.split("/");
   const id = parseInt(pathSeg[pathSeg.length - 1]);
+
   return (
     <>
       <GridContainer key={id}>
@@ -26,4 +26,4 @@ const Video = (props) => {
   );
 };
 
-export default Video;
+export default Traffic;

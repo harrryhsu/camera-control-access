@@ -86,5 +86,8 @@ export const ApiWrapper = () => {
     GetDrawerConfig: (id) => get(`drawer?id=${id}`),
     SetDrawerConfig: (data) => post("drawer", data),
     GetMetadata: () => get("metadata"),
+    PostStream: (body) => post("stream", body),
+    PutStream: (body) => put("stream", body),
+    DeleteStream: (body) => del("stream", body),
   };
 };
