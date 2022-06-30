@@ -26,5 +26,6 @@ yarn-error.log*
 
 commit.sh
 /public
+/storage
 
 ffmpeg.exe
