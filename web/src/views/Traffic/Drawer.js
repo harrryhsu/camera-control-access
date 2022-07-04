@@ -43,6 +43,7 @@ export default function Drawer({ id }) {
     api,
     setDialogSrc,
     metadata: { SCREEN_SIZE, OPTIONS, DEFAULT },
+    t,
   } = useContext(UtilContext);
 
   const [shapeData, setShapeData, shapeDataRef] = useState([]);
@@ -276,7 +277,7 @@ export default function Drawer({ id }) {
                 );
               }}
             >
-              <Tooltip title="Add">
+              <Tooltip title={t("Add")}>
                 <AddIcon />
               </Tooltip>
             </Fab>
@@ -297,7 +298,7 @@ export default function Drawer({ id }) {
                   .catch(setError);
               }}
             >
-              <Tooltip title="Submit">
+              <Tooltip title={t("Submit")}>
                 <ArrowUpwardIcon />
               </Tooltip>
             </Fab>

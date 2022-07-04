@@ -177,9 +177,18 @@ const TARGET_CONFIG = {
   // * Optional
 };
 
+const TRANSLATION = {
+  Add: "新增",
+  Submit: "提交",
+  Delete: "刪除",
+  Update: "更新",
+  Success: "成功",
+};
+
 module.exports = {
   SCREEN_SIZE,
   DEFAULT,
   OPTIONS,
   TARGET_CONFIG,
+  TRANSLATION,
 };

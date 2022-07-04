@@ -21,7 +21,6 @@ import { Dialog } from "@material-ui/core";
 import { ApiWrapper } from "api/api";
 import Dashboard from "@material-ui/icons/Dashboard";
 import Traffic from "views/Traffic/Traffic";
-import AddStream from "./AddStream";
 import CachedIcon from "@material-ui/icons/Cached";
 import { IconButton } from "@material-ui/core";
 import Form from "components/Form";
@@ -42,8 +41,14 @@ const Admin = ({ history, ...rest }) => {
     lock: false,
     container: undefined,
   });
-  const [metadata, setMetadata] = useState({ STREAM: {} });
+  const [metadata, setMetadata] = useState(null);
+  const [routes, setRoutes] = useState([]);
   const api = ApiWrapper();
+
+  const t = (w) => {
+    if (!metadata) throw "Cannot use translation before metadata is loaded";
+    return metadata.TRANSLATION[w] ?? w;
+  };
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -65,76 +70,79 @@ const Admin = ({ history, ...rest }) => {
 
   const getMetadata = () => api.GetMetadata().then(setMetadata).catch(setError);
 
-  const routes = [
-    ...Object.keys(metadata.STREAM).map((id) => ({
-      path: `/traffic/${id}`,
-      name: metadata.STREAM[id].name,
-      icon: Dashboard,
-      component: Traffic,
-      layout: "/admin",
-      isLoaded: true,
-      suffix: () => (
-        <IconButton
-          style={{ position: "absolute", right: 0, top: 0 }}
-          onClick={(e) => {
-            e.preventDefault();
+  useEffect(() => {
+    if (metadata)
+      setRoutes([
+        ...Object.keys(metadata.STREAM).map((id) => ({
+          path: `/traffic/${id}`,
+          name: metadata.STREAM[id].name,
+          icon: Dashboard,
+          component: Traffic,
+          layout: "/admin",
+          isLoaded: true,
+          suffix: () => (
+            <IconButton
+              style={{ position: "absolute", right: 0, top: 0 }}
+              onClick={(e) => {
+                e.preventDefault();
+                setDialogSrc({
+                  src: () => (
+                    <>
+                      <Form
+                        existingForm={metadata.STREAM[id]}
+                        onUpdate={(form) => {
+                          api
+                            .PostStream({ stream: form, id })
+                            .then(() => {
+                              setDialogSrc({ src: null });
+                              getMetadata();
+                            })
+                            .catch(setError);
+                        }}
+                        onDelete={() =>
+                          api
+                            .DeleteStream({ id })
+                            .then(() => getMetadata())
+                            .then(() => setDialogSrc({ src: null }))
+                            .catch(setError)
+                        }
+                        config={metadata.TARGET_CONFIG}
+                      />
+                    </>
+                  ),
+                });
+              }}
+            >
+              <CachedIcon />
+            </IconButton>
+          ),
+        })),
+        {
+          name: t("Add"),
+          icon: Dashboard,
+          layout: "/admin",
+          isLoaded: true,
+          onClick: () => {
             setDialogSrc({
               src: () => (
-                <>
-                  <Form
-                    existingForm={metadata.STREAM[id]}
-                    onUpdate={(form) => {
-                      api
-                        .PostStream({ stream: form, id })
-                        .then(() => {
-                          setDialogSrc({ src: null });
-                          getMetadata();
-                        })
-                        .catch(setError);
-                    }}
-                    onDelete={() =>
-                      api
-                        .DeleteStream({ id })
-                        .then(() => getMetadata())
-                        .then(() => setDialogSrc({ src: null }))
-                        .catch(setError)
-                    }
-                    config={metadata.TARGET_CONFIG}
-                  />
-                </>
+                <Form
+                  config={metadata.TARGET_CONFIG}
+                  onSubmit={(form) => {
+                    api
+                      .PutStream(form)
+                      .then(() => {
+                        setDialogSrc({ src: null });
+                        getMetadata();
+                      })
+                      .catch(setError);
+                  }}
+                />
               ),
             });
-          }}
-        >
-          <CachedIcon />
-        </IconButton>
-      ),
-    })),
-    {
-      name: "Add",
-      icon: Dashboard,
-      layout: "/admin",
-      isLoaded: true,
-      onClick: () => {
-        setDialogSrc({
-          src: () => (
-            <Form
-              config={metadata.TARGET_CONFIG}
-              onSubmit={(form) => {
-                api
-                  .PutStream(form)
-                  .then(() => {
-                    setDialogSrc({ src: null });
-                    getMetadata();
-                  })
-                  .catch(setError);
-              }}
-            />
-          ),
-        });
-      },
-    },
-  ];
+          },
+        },
+      ]);
+  }, [metadata]);
 
   useEffect(() => {
     getMetadata();
@@ -173,6 +181,7 @@ const Admin = ({ history, ...rest }) => {
           }),
         api,
         metadata,
+        t,
       }}
     >
       <div className={classes.wrapper}>
@@ -182,7 +191,7 @@ const Admin = ({ history, ...rest }) => {
           onClose={() => setMessage(["", ""])}
           duration={3000}
         >
-          {message[1]}
+          {message[1] ? t(message[1]) : ""}
         </Alert>
         <Dialog
           onClose={() =>
@@ -218,7 +227,7 @@ const Admin = ({ history, ...rest }) => {
             handleDrawerToggle={handleDrawerToggle}
             {...rest}
           />
-          {Object.keys(metadata.STREAM).length ? (
+          {metadata ? (
             <div className={classes.content}>
               <div className={classes.container}>
                 <Switch>

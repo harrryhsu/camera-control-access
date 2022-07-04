@@ -9,6 +9,7 @@ import Select from "components/CustomInput/Select";
 import Range from "components/CustomInput/Range";
 import MultiSelect from "components/CustomInput/MultiSelect";
 import Text from "components/CustomInput/Text";
+import { UtilContext } from "context/UtilContext";
 
 export default function Form(props) {
   const {
@@ -19,9 +20,12 @@ export default function Form(props) {
     config = {},
   } = props;
   const [form, setForm, formRef] = useState(existingForm);
-  const [anchor, setAnchor, anchorRef] = useState(() =>
-    document.getElementById("global-dialog")
-  );
+  const [anchor, setAnchor, anchorRef] = useState(null);
+  const { t } = useContext(UtilContext);
+
+  useEffect(() => {
+    setAnchor(document.getElementById("global-dialog"));
+  }, []);
 
   return (
     <GridContainer
@@ -29,6 +33,7 @@ export default function Form(props) {
     >
       {Object.keys(config).map((key, i) => {
         const field = config[key];
+        const label = t(field.label);
         if (field.type == "text")
           return (
             <GridItem xs={12} sm={12} md={12} key={i}>
@@ -36,7 +41,7 @@ export default function Form(props) {
                 id={key}
                 value={form[key] ?? ""}
                 onChange={(v) => setForm({ ...formRef.current, [key]: v })}
-                label={field.label}
+                label={label}
                 anchor={anchor}
               />
             </GridItem>
@@ -49,7 +54,7 @@ export default function Form(props) {
                 id={key}
                 value={form[key] ?? ""}
                 onChange={(v) => setForm({ ...formRef.current, [key]: v })}
-                label={field.label}
+                label={label}
                 anchor={anchor}
               />
             </GridItem>
@@ -63,7 +68,7 @@ export default function Form(props) {
                 max={field.max}
                 value={form[key] ?? field.min}
                 onChange={(v) => setForm({ ...formRef.current, [key]: v })}
-                label={field.label}
+                label={label}
                 anchor={anchor}
               />
             </GridItem>
@@ -75,7 +80,7 @@ export default function Form(props) {
                 id={key}
                 value={form[key] ?? ""}
                 onChange={(v) => setForm({ ...formRef.current, [key]: v })}
-                label={field.label}
+                label={label}
                 options={field.options}
                 anchor={anchor}
               />
@@ -88,7 +93,7 @@ export default function Form(props) {
                 id={key}
                 value={form[key] ?? []}
                 onChange={(v) => setForm({ ...formRef.current, [key]: v })}
-                label={field.label}
+                label={label}
                 options={field.options ?? {}}
                 anchor={anchor}
               />
@@ -103,7 +108,7 @@ export default function Form(props) {
             style={{ margin: "20px 0 0 0" }}
             fullWidth
           >
-            Delete
+            {t("Delete")}
           </Button>
         </GridItem>
       ) : null}
@@ -114,7 +119,7 @@ export default function Form(props) {
             style={{ margin: "20px 0 0 0" }}
             fullWidth
           >
-            Update
+            {t("Update")}
           </Button>
         </GridItem>
       ) : null}
@@ -125,7 +130,7 @@ export default function Form(props) {
             style={{ margin: "20px 0 0 0" }}
             fullWidth
           >
-            Add
+            {t("Add")}
           </Button>
         </GridItem>
       ) : null}
