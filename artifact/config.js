@@ -1,21 +1,35 @@
-const OPERATE_CLASS_ID_OPTIONS = {
-  0: "Car",
-  1: "Motor",
-  2: "Truck",
-  3: "Pedestrian",
-  4: "Bus",
-};
-
-const LINE_MODE = {
-  loose: "Loose",
-  balanced: "Balanced",
-  strict: "Strict",
-};
-
 const DEFAULT_FIELDS = {
   name: {
     type: "text",
     label: "Name",
+  },
+};
+
+const OPERATE_CLASS_ID_FIELD = {
+  operate_class_id: {
+    type: "multi-select",
+    label: "車種偵測",
+    options: {
+      0: "Car",
+      1: "Motor",
+      2: "Truck",
+      3: "Pedestrian",
+      4: "Bus",
+    },
+  },
+};
+
+const DIRECTION_FIELD = {
+  direction: {
+    label: "方向",
+    type: "select",
+    options: {
+      left: "Left",
+      right: "Right",
+      turn_around: "Turn Around",
+      straight: "Straight",
+      prohibited: "Prohibited",
+    },
   },
 };
 
@@ -27,82 +41,45 @@ const OPTIONS = {
     required: true,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        type: "multi-select",
-        label: "Class IDs",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
+      ...OPERATE_CLASS_ID_FIELD,
     },
   },
   turn: {
-    name: "Turn",
+    name: "偵測線",
     type: "line_directed",
     unique: false,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        type: "multi-select",
-        label: "Class IDs",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
+      ...OPERATE_CLASS_ID_FIELD,
       mode: {
-        label: "Line Mode",
-        type: "select",
-        options: LINE_MODE,
-      },
-      direction: {
-        label: "Direction",
+        label: "偵測線模式",
         type: "select",
         options: {
-          left: "Left",
-          right: "Right",
-          turn_around: "Turn Around",
-          straight: "Straight",
-          prohibited: "Prohibited",
+          loose: "Loose",
+          balanced: "Balanced",
+          strict: "Strict",
         },
       },
+      ...DIRECTION_FIELD,
     },
   },
   lane: {
-    name: "Lane",
+    name: "車道",
     type: "pentagon",
     unique: false,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        label: "Class IDs",
-        type: "multi-select",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
-      direction: {
-        label: "Direction",
-        type: "select",
-        options: {
-          straight: "Straight",
-          left: "Left",
-          right: "Right",
-          straight_left: "Straight/Left",
-          straight_right: "Straight/Right",
-          straight_right_left: "Straight/Right/Left",
-        },
-      },
-      lane_number: {
-        label: "Lane number",
-        type: "text",
-      },
+      ...OPERATE_CLASS_ID_FIELD,
+      ...DIRECTION_FIELD,
     },
   },
   vehicle_queue: {
-    name: "Vehicle Queue",
+    name: "排隊車輛",
     type: "pentagon",
     unique: false,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        label: "Class IDs",
-        type: "multi-select",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
+      ...OPERATE_CLASS_ID_FIELD,
     },
   },
   checkpoint_lpd: {
@@ -112,15 +89,11 @@ const OPTIONS = {
     required: true,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        label: "Class IDs",
-        type: "multi-select",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
+      ...OPERATE_CLASS_ID_FIELD,
     },
   },
   zebra_crossing: {
-    name: "Crosswalk",
+    name: "斑馬線",
     type: "pentagon",
     unique: true,
     fields: {
@@ -128,7 +101,7 @@ const OPTIONS = {
     },
   },
   traffic_light: {
-    name: "Traffic Light",
+    name: "紅綠燈",
     type: "rect",
     unique: true,
     fields: {
@@ -142,7 +115,7 @@ const OPTIONS = {
     },
   },
   double_white: {
-    name: "Double White",
+    name: "雙白線",
     type: "line",
     unique: false,
     fields: {
@@ -177,22 +150,36 @@ const SCREEN_SIZE = [
   [1600, 900],
 ];
 
-const APIS = [
-  {
-    name: "TEST1",
-    api: "http://host.docker.internal:1002/api/drawer/1",
-    rtsp: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4",
+const TARGET_CONFIG = {
+  // ! Important
+  name: {
+    type: "text",
+    label: "名稱",
   },
-  {
-    name: "TEST2",
-    api: "http://host.docker.internal:1002/api/drawer/2",
-    rtsp: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4",
+  rtsp: {
+    type: "text",
+    label: "RTSP串流",
   },
-];
+  api: {
+    type: "text",
+    label: "IP",
+  },
+  // ! Important
+  // * Optional
+  locationIndex: {
+    type: "number",
+    label: "點位編號",
+  },
+  cameraIndex: {
+    type: "number",
+    label: "攝影機編號",
+  },
+  // * Optional
+};
 
 module.exports = {
   SCREEN_SIZE,
   DEFAULT,
   OPTIONS,
-  // APIS,
+  TARGET_CONFIG,
 };

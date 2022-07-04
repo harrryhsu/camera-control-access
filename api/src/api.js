@@ -7,6 +7,13 @@ const storage = require("./storage");
 
 const app = express();
 
+if (
+  !config.TARGET_CONFIG.name ||
+  !config.TARGET_CONFIG.rtsp ||
+  !config.TARGET_CONFIG.api
+)
+  throw "Missing config (name|rtsp|api)";
+
 const okay = (res, data) => {
   res.contentType("application/json").status(200).send({
     status: true,

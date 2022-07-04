@@ -1,9 +1,3 @@
-const LINE_MODE = {
-  loose: "Loose",
-  balanced: "Balanced",
-  strict: "Strict",
-};
-
 const DEFAULT_FIELDS = {
   name: {
     type: "text",
@@ -14,7 +8,7 @@ const DEFAULT_FIELDS = {
 const OPERATE_CLASS_ID_FIELD = {
   operate_class_id: {
     type: "multi-select",
-    label: "Class IDs",
+    label: "車種偵測",
     options: {
       0: "Car",
       1: "Motor",
@@ -27,7 +21,7 @@ const OPERATE_CLASS_ID_FIELD = {
 
 const DIRECTION_FIELD = {
   direction: {
-    label: "Direction",
+    label: "方向",
     type: "select",
     options: {
       left: "Left",
@@ -51,22 +45,26 @@ const OPTIONS = {
     },
   },
   turn: {
-    name: "Turn",
+    name: "偵測線",
     type: "line_directed",
     unique: false,
     fields: {
       ...DEFAULT_FIELDS,
       ...OPERATE_CLASS_ID_FIELD,
       mode: {
-        label: "Line Mode",
+        label: "偵測線模式",
         type: "select",
-        options: LINE_MODE,
+        options: {
+          loose: "Loose",
+          balanced: "Balanced",
+          strict: "Strict",
+        },
       },
       ...DIRECTION_FIELD,
     },
   },
   lane: {
-    name: "Lane",
+    name: "車道",
     type: "pentagon",
     unique: false,
     fields: {
@@ -76,7 +74,7 @@ const OPTIONS = {
     },
   },
   vehicle_queue: {
-    name: "Vehicle Queue",
+    name: "排隊車輛",
     type: "pentagon",
     unique: false,
     fields: {
@@ -95,7 +93,7 @@ const OPTIONS = {
     },
   },
   zebra_crossing: {
-    name: "Crosswalk",
+    name: "斑馬線",
     type: "pentagon",
     unique: true,
     fields: {
@@ -103,7 +101,7 @@ const OPTIONS = {
     },
   },
   traffic_light: {
-    name: "Traffic Light",
+    name: "紅綠燈",
     type: "rect",
     unique: true,
     fields: {
@@ -117,7 +115,7 @@ const OPTIONS = {
     },
   },
   double_white: {
-    name: "Double White",
+    name: "雙白線",
     type: "line",
     unique: false,
     fields: {
@@ -153,26 +151,30 @@ const SCREEN_SIZE = [
 ];
 
 const TARGET_CONFIG = {
+  // ! Important
   name: {
     type: "text",
-    label: "Name",
+    label: "名稱",
   },
   rtsp: {
     type: "text",
-    label: "RTSP",
+    label: "RTSP串流",
   },
   api: {
     type: "text",
-    label: "API",
+    label: "IP",
   },
+  // ! Important
+  // * Optional
   locationIndex: {
     type: "number",
-    label: "Location Index",
+    label: "點位編號",
   },
   cameraIndex: {
     type: "number",
-    label: "Camera Index",
+    label: "攝影機編號",
   },
+  // * Optional
 };
 
 module.exports = {
