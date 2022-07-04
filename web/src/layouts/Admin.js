@@ -24,6 +24,7 @@ import Traffic from "views/Traffic/Traffic";
 import AddStream from "./AddStream";
 import CachedIcon from "@material-ui/icons/Cached";
 import { IconButton } from "@material-ui/core";
+import Form from "components/Form";
 
 let ps;
 
@@ -80,7 +81,7 @@ const Admin = ({ history, ...rest }) => {
             setDialogSrc({
               src: () => (
                 <>
-                  <AddStream
+                  <Form
                     existingForm={metadata.STREAM[id]}
                     onUpdate={(form) => {
                       api
@@ -98,6 +99,7 @@ const Admin = ({ history, ...rest }) => {
                         .then(() => setDialogSrc({ src: null }))
                         .catch(setError)
                     }
+                    config={metadata.TARGET_CONFIG}
                   />
                 </>
               ),
@@ -116,7 +118,8 @@ const Admin = ({ history, ...rest }) => {
       onClick: () => {
         setDialogSrc({
           src: () => (
-            <AddStream
+            <Form
+              config={metadata.TARGET_CONFIG}
               onSubmit={(form) => {
                 api
                   .PutStream(form)

@@ -1,11 +1,3 @@
-const OPERATE_CLASS_ID_OPTIONS = {
-  0: "Car",
-  1: "Motor",
-  2: "Truck",
-  3: "Pedestrian",
-  4: "Bus",
-};
-
 const LINE_MODE = {
   loose: "Loose",
   balanced: "Balanced",
@@ -19,6 +11,34 @@ const DEFAULT_FIELDS = {
   },
 };
 
+const OPERATE_CLASS_ID_FIELD = {
+  operate_class_id: {
+    type: "multi-select",
+    label: "Class IDs",
+    options: {
+      0: "Car",
+      1: "Motor",
+      2: "Truck",
+      3: "Pedestrian",
+      4: "Bus",
+    },
+  },
+};
+
+const DIRECTION_FIELD = {
+  direction: {
+    label: "Direction",
+    type: "select",
+    options: {
+      left: "Left",
+      right: "Right",
+      turn_around: "Turn Around",
+      straight: "Straight",
+      prohibited: "Prohibited",
+    },
+  },
+};
+
 const OPTIONS = {
   checkpoint: {
     name: "Checkpoint",
@@ -27,11 +47,7 @@ const OPTIONS = {
     required: true,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        type: "multi-select",
-        label: "Class IDs",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
+      ...OPERATE_CLASS_ID_FIELD,
     },
   },
   turn: {
@@ -40,27 +56,13 @@ const OPTIONS = {
     unique: false,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        type: "multi-select",
-        label: "Class IDs",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
+      ...OPERATE_CLASS_ID_FIELD,
       mode: {
         label: "Line Mode",
         type: "select",
         options: LINE_MODE,
       },
-      direction: {
-        label: "Direction",
-        type: "select",
-        options: {
-          left: "Left",
-          right: "Right",
-          turn_around: "Turn Around",
-          straight: "Straight",
-          prohibited: "Prohibited",
-        },
-      },
+      ...DIRECTION_FIELD,
     },
   },
   lane: {
@@ -69,23 +71,8 @@ const OPTIONS = {
     unique: false,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        label: "Class IDs",
-        type: "multi-select",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
-      direction: {
-        label: "Direction",
-        type: "select",
-        options: {
-          straight: "Straight",
-          left: "Left",
-          right: "Right",
-          straight_left: "Straight/Left",
-          straight_right: "Straight/Right",
-          straight_right_left: "Straight/Right/Left",
-        },
-      },
+      ...OPERATE_CLASS_ID_FIELD,
+      ...DIRECTION_FIELD,
     },
   },
   vehicle_queue: {
@@ -94,11 +81,7 @@ const OPTIONS = {
     unique: false,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        label: "Class IDs",
-        type: "multi-select",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
+      ...OPERATE_CLASS_ID_FIELD,
     },
   },
   checkpoint_lpd: {
@@ -108,11 +91,7 @@ const OPTIONS = {
     required: true,
     fields: {
       ...DEFAULT_FIELDS,
-      operate_class_id: {
-        label: "Class IDs",
-        type: "multi-select",
-        options: OPERATE_CLASS_ID_OPTIONS,
-      },
+      ...OPERATE_CLASS_ID_FIELD,
     },
   },
   zebra_crossing: {
@@ -173,22 +152,32 @@ const SCREEN_SIZE = [
   [1600, 900],
 ];
 
-const APIS = [
-  {
-    name: "TEST1",
-    api: "http://host.docker.internal:1002/api/drawer/1",
-    rtsp: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4",
+const TARGET_CONFIG = {
+  name: {
+    type: "text",
+    label: "Name",
   },
-  {
-    name: "TEST2",
-    api: "http://host.docker.internal:1002/api/drawer/2",
-    rtsp: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4",
+  rtsp: {
+    type: "text",
+    label: "RTSP",
   },
-];
+  api: {
+    type: "text",
+    label: "API",
+  },
+  locationIndex: {
+    type: "number",
+    label: "Location Index",
+  },
+  cameraIndex: {
+    type: "number",
+    label: "Camera Index",
+  },
+};
 
 module.exports = {
   SCREEN_SIZE,
   DEFAULT,
   OPTIONS,
-  // APIS,
+  TARGET_CONFIG,
 };

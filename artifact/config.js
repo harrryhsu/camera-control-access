@@ -86,6 +86,10 @@ const OPTIONS = {
           straight_right_left: "Straight/Right/Left",
         },
       },
+      lane_number: {
+        label: "Lane number",
+        type: "text",
+      },
     },
   },
   vehicle_queue: {
