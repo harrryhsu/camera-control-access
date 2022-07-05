@@ -56,3 +56,26 @@ if (typeof Object.keys != "function") {
     return keys;
   };
 }
+
+Array.prototype.toObject = function (keyf, valuef) {
+  return this.reduce((acc, v) => ({ ...acc, [keyf(v)]: valuef(v) }), {});
+};
+
+Array.prototype.fromObject = function (object, valuef) {
+  return Object.keys(object).reduce(
+    (acc, v) => [...acc, valuef(v, this[v])],
+    []
+  );
+};
+
+Array.prototype.distinct = function () {
+  return this.filter((value, index, self) => self.indexOf(value) === index);
+};
+
+Array.prototype.remove = function (elem) {
+  return this.filter((x) => x != elem);
+};
+
+Array.prototype.first = function (selector) {
+  return this.find((e) => (selector ? selector(e) : true));
+};

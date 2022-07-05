@@ -12,16 +12,6 @@ import MultiSelect from "components/CustomInput/MultiSelect";
 import Text from "components/CustomInput/Text";
 import Form from "components/Form";
 
-const mapFieldDefault = (fieldDef) => {
-  var defaultVal = "";
-  if (fieldDef.type == "range") defaultVal = fieldDef.min;
-  if (fieldDef.type == "select") defaultVal = Object.keys(fieldDef.options)[0];
-  if (fieldDef.type == "number") defaultVal = 0;
-  if (fieldDef.type == "multi-select")
-    defaultVal = [Object.keys(fieldDef.options)[0]];
-  return defaultVal;
-};
-
 export default function AddShapeDialog(props) {
   const {
     onSubmit,

@@ -32,8 +32,6 @@ const useStyles = makeStyles(styles);
 const Admin = ({ history, ...rest }) => {
   const classes = useStyles();
   const mainPanel = React.createRef();
-  const [image, setImage] = useState(bgImage);
-  const [color, setColor] = useState("grey");
   const [message, setMessage] = useState(["", ""]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dialogSrc, setDialogSrc] = useState({
@@ -46,18 +44,14 @@ const Admin = ({ history, ...rest }) => {
   const api = ApiWrapper();
 
   const t = (w) => {
-    if (!metadata) throw "Cannot use translation before metadata is loaded";
+    if (!metadata) return w;
     return metadata.TRANSLATION[w] ?? w;
   };
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  const resizeFunction = () => {
-    if (window.innerWidth >= 960) {
-      setMobileOpen(false);
-    }
-  };
+
   const setError = (errObj) => {
     if (typeof errObj == "string") return setMessage(["error", errObj]);
     else
@@ -157,6 +151,11 @@ const Admin = ({ history, ...rest }) => {
       });
       document.body.style.overflow = "hidden";
     }
+    const resizeFunction = () => {
+      if (window.innerWidth >= 960) {
+        setMobileOpen(false);
+      }
+    };
     window.addEventListener("resize", resizeFunction);
     // Specify how to clean up after this effect:
     return function cleanup() {
@@ -215,10 +214,10 @@ const Admin = ({ history, ...rest }) => {
           routes={routes}
           logoText=""
           logo={logo}
-          image={image}
+          image={bgImage}
           handleDrawerToggle={handleDrawerToggle}
           open={mobileOpen}
-          color={color}
+          color={"grey"}
           {...rest}
         />
         <div className={classes.mainPanel} ref={mainPanel}>

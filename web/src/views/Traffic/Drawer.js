@@ -16,6 +16,7 @@ import {
   DetectionLineWithDirection,
   DetectionRect,
   DetectionShape,
+  TrafficLight,
 } from "./Shape";
 
 import { Stage, Layer } from "react-konva/lib/ReactKonvaCore";
@@ -177,6 +178,7 @@ export default function Drawer({ id }) {
             >
               <Layer>
                 {shapeDataRef.current.map((entry, i) => {
+                  console.log(entry);
                   var Shape;
                   switch (entry.type) {
                     case "line":
@@ -190,6 +192,9 @@ export default function Drawer({ id }) {
                       break;
                     case "line_directed":
                       Shape = DetectionLineWithDirection;
+                      break;
+                    case "traffic_light":
+                      Shape = TrafficLight;
                       break;
                     default:
                       console.error("Unkown type: " + entry.type);

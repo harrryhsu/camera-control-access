@@ -102,7 +102,7 @@ const OPTIONS = {
   },
   traffic_light: {
     name: "紅綠燈",
-    type: "rect",
+    type: "traffic_light",
     unique: true,
     fields: {
       ...DEFAULT_FIELDS,
@@ -143,6 +143,7 @@ const DEFAULT = {
     { x: 150, y: 80 },
   ],
   rect: [{ x: 150, y: 30 }, 200, 200],
+  traffic_light: [{ x: 150, y: 30 }, 200, 200],
 };
 
 const SCREEN_SIZE = [

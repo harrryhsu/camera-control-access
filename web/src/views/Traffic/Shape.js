@@ -384,3 +384,43 @@ export const DetectionRect = (props) => {
     </>
   );
 };
+
+export const TrafficLight = (props) => {
+  const { pts, onClick, addition } = props;
+  var [point, width, height, lights] = pts;
+  if (!lights) {
+    // lights = [...Array(num)].map(() => width / num);
+  }
+
+  var acc = 0;
+
+  return (
+    <>
+      {lights.map((width, i) => {
+        const posX = point.x + acc + width;
+        const posY = point.y;
+        acc += width;
+
+        const np = [posX, posY + height];
+
+        return (
+          <Line
+            key={i}
+            x={pts[0].x}
+            y={pts[0].y}
+            points={[0, 0, ...np]}
+            tension={0}
+            closed
+            stroke="yellow"
+            strokeWidth={STROKE_WIDTH}
+            onDragMove={(e) => {}}
+            draggable
+            onClick={onClick}
+          />
+        );
+      })}
+
+      <DetectionRect {...props} />
+    </>
+  );
+};
