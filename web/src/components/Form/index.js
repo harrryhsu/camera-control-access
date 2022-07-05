@@ -65,7 +65,7 @@ export default function Form(props) {
                 <Text
                   id={key}
                   required={config.required}
-                  value={form[key] ?? ""}
+                  value={form[key] ?? field.default ?? ""}
                   onChange={(v) => setForm({ ...formRef.current, [key]: v })}
                   label={label}
                   anchor={anchor}
@@ -79,7 +79,7 @@ export default function Form(props) {
                   numeric
                   id={key}
                   required={config.required}
-                  value={form[key] ?? 0}
+                  value={form[key] ?? field.default ?? 0}
                   onChange={(v) => setForm({ ...formRef.current, [key]: v })}
                   label={label}
                   anchor={anchor}
@@ -93,7 +93,7 @@ export default function Form(props) {
                   id={key}
                   min={field.min}
                   max={field.max}
-                  value={form[key] ?? field.min}
+                  value={form[key] ?? field.default ?? field.min}
                   onChange={(v) => setForm({ ...formRef.current, [key]: v })}
                   label={label}
                   anchor={anchor}
@@ -105,7 +105,7 @@ export default function Form(props) {
               <GridItem xs={12} sm={12} md={12} key={i}>
                 <Select
                   id={key}
-                  value={form[key] ?? ""}
+                  value={form[key] ?? field.default ?? ""}
                   required={config.required}
                   onChange={(v) => setForm({ ...formRef.current, [key]: v })}
                   label={label}
@@ -119,7 +119,7 @@ export default function Form(props) {
               <GridItem xs={12} sm={12} md={12} key={i}>
                 <MultiSelect
                   id={key}
-                  value={form[key] ?? []}
+                  value={form[key] ?? field.default ?? []}
                   required={config.required}
                   onChange={(v) => setForm({ ...formRef.current, [key]: v })}
                   label={label}
