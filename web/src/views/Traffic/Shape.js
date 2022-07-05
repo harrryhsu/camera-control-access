@@ -293,7 +293,7 @@ export const DetectionShape = (props) => {
 
 export const DetectionRect = (props) => {
   const { pts, setPts, name, onClick } = props;
-  const [point, width, height] = pts;
+  const [point, width, height, ...rest] = pts;
   const points = [
     point,
     { x: point.x + width, y: point.y },
@@ -325,7 +325,7 @@ export const DetectionRect = (props) => {
         draggable
         onDragMove={(e) => {
           const np = { x: e.target.attrs.x, y: e.target.attrs.y };
-          setPts([np, width, height]);
+          setPts([np, width, height, ...rest]);
         }}
         onClick={onClick}
       />
@@ -338,7 +338,7 @@ export const DetectionRect = (props) => {
           const np = { x: e.target.attrs.x, y: e.target.attrs.y };
           const dy = point.y - np.y,
             dx = point.x - np.x;
-          setPts([np, width + dx, height + dy]);
+          setPts([np, width + dx, height + dy, ...rest]);
         }}
         draggable
       />
@@ -351,7 +351,12 @@ export const DetectionRect = (props) => {
           const np = { x: e.target.attrs.x, y: e.target.attrs.y };
           const dy = point.y - np.y,
             dx = point.x + width - np.x;
-          setPts([{ x: point.x, y: point.y - dy }, width - dx, height + dy]);
+          setPts([
+            { x: point.x, y: point.y - dy },
+            width - dx,
+            height + dy,
+            ...rest,
+          ]);
         }}
         draggable
       />
@@ -364,7 +369,12 @@ export const DetectionRect = (props) => {
           const np = { x: e.target.attrs.x, y: e.target.attrs.y };
           const dy = point.y + height - np.y,
             dx = point.x - np.x;
-          setPts([{ x: point.x - dx, y: point.y }, width + dx, height - dy]);
+          setPts([
+            { x: point.x - dx, y: point.y },
+            width + dx,
+            height - dy,
+            ...rest,
+          ]);
         }}
         draggable
       />
@@ -377,7 +387,7 @@ export const DetectionRect = (props) => {
           const np = { x: e.target.attrs.x, y: e.target.attrs.y };
           const dy = point.y + height - np.y,
             dx = point.x + width - np.x;
-          setPts([point, width - dx, height - dy]);
+          setPts([point, width - dx, height - dy, ...rest]);
         }}
         draggable
       />
@@ -385,42 +395,65 @@ export const DetectionRect = (props) => {
   );
 };
 
+var hack = 0.1;
+
 export const TrafficLight = (props) => {
-  const { pts, onClick, addition } = props;
+  const {
+    pts,
+    setPts,
+    vertical = false,
+    addition: { num },
+  } = props;
   var [point, width, height, lights] = pts;
   if (!lights) {
-    // lights = [...Array(num)].map(() => width / num);
+    var acc = 0;
+    lights = [...Array(num - 1)].map(() => (acc += width / num));
   }
-
-  var acc = 0;
+  hack *= -1;
 
   return (
     <>
-      {lights.map((width, i) => {
-        const posX = point.x + acc + width;
-        const posY = point.y;
-        acc += width;
-
-        const np = [posX, posY + height];
+      <DetectionRect
+        {...props}
+        setPts={(pts) => {
+          setPts([
+            ...pts.slice(0, 3),
+            lights.map((light) => (light / width) * pts[1]),
+          ]);
+        }}
+      />
+      {lights.map((offsetX, i) => {
+        const posX = point.x + offsetX + hack;
+        const posY = point.y + hack;
 
         return (
           <Line
             key={i}
-            x={pts[0].x}
-            y={pts[0].y}
-            points={[0, 0, ...np]}
+            x={posX}
+            y={posY}
+            points={[0, 0, 0, height]}
             tension={0}
             closed
             stroke="yellow"
             strokeWidth={STROKE_WIDTH}
-            onDragMove={(e) => {}}
+            onDragEnd={() => {
+              setPts([...pts.slice(0, 3), lights.sort()]);
+            }}
+            onDragMove={(e) => {
+              const np = { x: e.target.attrs.x, y: e.target.attrs.y };
+              const newOffset = offsetX + (np.x - posX);
+              const newOffsetLimited = Math.min(width, Math.max(newOffset, 0));
+              const newLights = [
+                ...lights.slice(0, i),
+                newOffsetLimited,
+                ...lights.slice(i + 1, lights.length),
+              ];
+              setPts([...pts.slice(0, 3), newLights]);
+            }}
             draggable
-            onClick={onClick}
           />
         );
       })}
-
-      <DetectionRect {...props} />
     </>
   );
 };

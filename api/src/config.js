@@ -102,7 +102,7 @@ const OPTIONS = {
   },
   traffic_light: {
     name: "紅綠燈",
-    type: "traffic_light",
+    type: "rect",
     unique: true,
     fields: {
       ...DEFAULT_FIELDS,
