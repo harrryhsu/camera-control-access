@@ -44,8 +44,6 @@ export default function Form(props) {
     setAnchor(document.getElementById("global-dialog"));
   }, []);
 
-  console.log(defaultForm(), form);
-
   return (
     <form
       onSubmit={(...args) => {
