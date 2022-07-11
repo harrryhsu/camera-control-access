@@ -81,7 +81,7 @@ app.get("/api/drawer", async (req, res) => {
   const { id } = req.query;
   const streams = (await storage.getItem("STREAM")) ?? [];
   axios
-    .get(streams[id].api)
+    .get(`${streams[id].api}?id=${id}`)
     .then(({ data }) => okay(res, data.data))
     .catch(error);
 });
@@ -90,7 +90,7 @@ app.post("/api/drawer", async (req, res) => {
   const { id, data } = req.body;
   const streams = (await storage.getItem("STREAM")) ?? [];
   axios
-    .post(streams[id].api, { data: streams[id], shapes: data })
+    .post(`${streams[id].api}?id=${id}`, { data: streams[id], shapes: data })
     .then(() => okay(res))
     .catch(error);
 });
