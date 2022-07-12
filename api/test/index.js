@@ -12,6 +12,7 @@ const okay = (res, data) => {
 };
 
 const error = (res) => (msg) => {
+  console.log(msg);
   res.contentType("application/json").status(500).send({
     status: false,
     message: msg.toString(),
@@ -32,7 +33,6 @@ app.get("/api/drawer", (req, res) => {
 app.post("/api/drawer", (req, res) => {
   const { data, stream, id } = req.body;
   config[id] = { ...(config[id] ?? {}), drawer: data };
-  console.log(stream);
   okay(res);
 });
 
@@ -42,7 +42,7 @@ app.get("/api/setting", (req, res) => {
 });
 
 app.post("/api/setting", (req, res) => {
-  const { data, id } = req.body;
+  const { data, stream, id } = req.body;
   config[id] = { ...(config[id] ?? {}), setting: data };
   okay(res);
 });
@@ -65,12 +65,10 @@ const liPath = path.join(process.cwd(), "test/large.jpg");
 
 app.get("/api/image", (req, res) => {
   const { id, mid, type } = req.query;
-  console.log(id, mid, type);
   res.status(200).sendFile(type === "l" ? liPath : siPath);
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
   error(res)(err);
 });
 
