@@ -79,3 +79,8 @@ Array.prototype.remove = function (elem) {
 Array.prototype.first = function (selector) {
   return this.find((e) => (selector ? selector(e) : true));
 };
+
+Array.prototype.last = function (selector) {
+  const filtered = this.filter((e) => (selector ? selector(e) : true));
+  return filtered[filtered.length - 1];
+};

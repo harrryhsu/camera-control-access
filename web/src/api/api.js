@@ -65,6 +65,8 @@ const wsUrl =
     : "ws://" + window.location.hostname + ":" + window.location.port + "/live";
 
 export const ApiWrapper = () => {
+  const id = window.location.pathname.split("/").last();
+
   function get(path, body) {
     return jsonUnwrap(http("GET", `${baseUrl}/api/${path}`, body, false));
   }
@@ -82,12 +84,17 @@ export const ApiWrapper = () => {
   }
 
   return {
-    WebRTCUrl: (id) => wsUrl + `/${id}`,
-    GetDrawerConfig: (id) => get(`drawer?id=${id}`),
+    WebRTCUrl: () => wsUrl + `/${id}`,
+    GetDrawerConfig: () => get(`drawer?id=${id}`),
     SetDrawerConfig: (data) => post("drawer", data),
     GetMetadata: () => get("metadata"),
     PostStream: (body) => post("stream", body),
     PutStream: (body) => put("stream", body),
     DeleteStream: (body) => del("stream", body),
+    PostSetting: (body) => post("setting", { id, ...body }),
+    GetSetting: () => get(`setting?id=${id}`),
+    GetRecord: () => get(`record?id=${id}`),
+    GetImageSource: (mid, type) =>
+      `${baseUrl}/api/image?id=${id}&mid=${mid}&type=${type}`,
   };
 };

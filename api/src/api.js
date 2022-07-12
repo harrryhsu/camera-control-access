@@ -14,6 +14,8 @@ if (
 )
   throw "Missing config (name|rtsp|api)";
 
+const { API_PATH } = config;
+
 const okay = (res, data) => {
   res.contentType("application/json").status(200).send({
     status: true,
@@ -22,6 +24,7 @@ const okay = (res, data) => {
 };
 
 const error = (res) => (msg) => {
+  console.log(msg);
   res.contentType("application/json").status(500).send({
     status: false,
     message: msg.toString(),
@@ -77,21 +80,55 @@ app.delete("/api/stream", async (req, res) => {
   okay(res);
 });
 
-app.get("/api/drawer", async (req, res) => {
+const proxyGet = (path) => async (req, res) => {
   const { id } = req.query;
-  const streams = (await storage.getItem("STREAM")) ?? [];
+  const streams = await storage.getItem("STREAM");
+  const stream = streams[id];
+  if (!stream) return error(res)("Stream id not found");
   axios
-    .get(`${streams[id].api}?id=${id}`)
+    .get(`http://${stream.api}/${path}?id=${id}`)
     .then(({ data }) => okay(res, data.data))
     .catch(error);
-});
+};
 
-app.post("/api/drawer", async (req, res) => {
+const proxyPost = (path) => async (req, res) => {
   const { id, data } = req.body;
-  const streams = (await storage.getItem("STREAM")) ?? [];
+  const streams = await storage.getItem("STREAM");
+  const stream = streams[id];
+  if (!stream) return error(res)("Stream id not found");
   axios
-    .post(`${streams[id].api}?id=${id}`, { data: streams[id], shapes: data })
+    .post(`http://${stream.api}/${path}`, {
+      id,
+      data,
+      stream,
+    })
     .then(() => okay(res))
+    .catch(error);
+};
+
+app.get("/api/drawer", proxyGet(API_PATH.drawer));
+app.post("/api/drawer", proxyPost(API_PATH.drawer));
+
+app.get("/api/setting", proxyGet(API_PATH.setting));
+app.post("/api/setting", proxyPost(API_PATH.setting));
+
+app.get("/api/record", proxyGet(API_PATH.record));
+app.post("/api/record", proxyPost(API_PATH.record));
+
+app.get("/api/image", async (req, res) => {
+  const { id, mid, type } = req.query;
+  const streams = await storage.getItem("STREAM");
+  const stream = streams[id];
+  if (!stream) return error(res)("Stream id not found");
+  axios
+    .get(
+      `http://${stream.api}/${API_PATH.image}?id=${id}&mid=${mid}&type=${type}`,
+      { responseType: "stream" }
+    )
+    .then((response) => {
+      res.status(response.status).contentType("image/jpg");
+      response.data.pipe(res);
+    })
     .catch(error);
 });
 

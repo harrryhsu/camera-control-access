@@ -46,9 +46,10 @@ export default function Form(props) {
 
   return (
     <form
-      onSubmit={(...args) => {
+      onSubmit={(e) => {
+        e.preventDefault();
         if (onSubmit) onSubmit({ ...defaultForm(), ...formRef.current });
-        if (onUpdate) onUpdate({ ...defaultForm(), ...formRef.current });
+        else if (onUpdate) onUpdate({ ...defaultForm(), ...formRef.current });
       }}
     >
       <GridContainer
@@ -132,7 +133,7 @@ export default function Form(props) {
           <GridItem xs={12} sm={12} md={12}>
             <Button
               onClick={() => onDelete({ ...defaultForm(), ...formRef.current })}
-              style={{ margin: "20px 0 0 0" }}
+              style={{ margin: "20px auto 0", maxWidth: 200 }}
               fullWidth
             >
               {t("Delete")}
@@ -141,14 +142,22 @@ export default function Form(props) {
         ) : null}
         {onUpdate ? (
           <GridItem xs={12} sm={12} md={12}>
-            <Button style={{ margin: "20px 0 0 0" }} fullWidth type="submit">
+            <Button
+              style={{ margin: "20px auto 0", maxWidth: 200 }}
+              fullWidth
+              type="submit"
+            >
               {t("Update")}
             </Button>
           </GridItem>
         ) : null}
         {onSubmit ? (
           <GridItem xs={12} sm={12} md={12}>
-            <Button style={{ margin: "20px 0 0 0" }} fullWidth type="submit">
+            <Button
+              style={{ margin: "20px auto 0", maxWidth: 200 }}
+              fullWidth
+              type="submit"
+            >
               {t("Add")}
             </Button>
           </GridItem>

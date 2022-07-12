@@ -36,23 +36,19 @@ var req;
 const scale = (value, factor, toPixel) =>
   toPixel ? value * factor : value / factor;
 
-export default function Drawer({ id }) {
-  const {
-    setError,
-    setSuccess,
-    api,
-    setDialogSrc,
-    metadata: { SCREEN_SIZE, OPTIONS, DEFAULT },
-    t,
-  } = useContext(UtilContext);
+export default function Drawer(props) {
+  const { screenSize, options, defaultValue, id } = props;
+  const { setError, setSuccess, api, setDialogSrc, t } = useContext(
+    UtilContext
+  );
 
   const [shapeData, setShapeData, shapeDataRef] = useState([]);
   const [videoSize, setVideoSize, videoSizeRef] = useState(0);
 
-  const currentSize = SCREEN_SIZE[videoSize];
+  const currentSize = screenSize[videoSize];
 
   const scaleShape = (shape, toPixel, newSize) => {
-    newSize = newSize || SCREEN_SIZE[videoSizeRef.current];
+    newSize = newSize || screenSize[videoSizeRef.current];
     if (shape.type === "rect") {
       return {
         ...shape,
@@ -93,12 +89,12 @@ export default function Drawer({ id }) {
     );
     setVideoSize(size);
     setShapeData(
-      dataInPerc.map((shape) => scaleShape(shape, true, SCREEN_SIZE[size]))
+      dataInPerc.map((shape) => scaleShape(shape, true, screenSize[size]))
     );
   };
 
   useEffect(() => {
-    const newSize = SCREEN_SIZE[videoSizeRef.current];
+    const newSize = screenSize[videoSizeRef.current];
     const fullscreenElement =
       document.fullscreenElement ||
       document.mozFullScreenElement ||
@@ -131,17 +127,17 @@ export default function Drawer({ id }) {
       .then((res) => {
         if (res.length) {
           const shapes = res.map((x) =>
-            scaleShape(x, true, SCREEN_SIZE[videoSizeRef.current])
+            scaleShape(x, true, screenSize[videoSizeRef.current])
           );
           setShapeData(shapes);
         } else {
           setShapeData([
-            ...Object.keys(OPTIONS)
-              .filter((key) => OPTIONS[key].required)
+            ...Object.keys(options)
+              .filter((key) => options[key].required)
               .map((key) => ({
                 key: key,
-                type: OPTIONS[key].type,
-                data: DEFAULT[OPTIONS[key].type],
+                type: options[key].type,
+                data: defaultValue[options[key].type],
                 addition: { name: key + "-default" },
                 id: uuidv4(),
               })),
@@ -206,6 +202,7 @@ export default function Drawer({ id }) {
                         setDialogSrc(
                           () => (
                             <AddShapeDialog
+                              options={options}
                               currentShapeKey={entry.key}
                               existingForm={entry.addition}
                               onUpdate={(data) =>
@@ -252,6 +249,7 @@ export default function Drawer({ id }) {
                 setDialogSrc(
                   () => (
                     <AddShapeDialog
+                      options={options}
                       onSubmit={(fieldData) => {
                         var shapeKey = fieldData.key;
                         setDialogSrc(
@@ -263,8 +261,8 @@ export default function Drawer({ id }) {
                           {
                             id: uuidv4(),
                             key: shapeKey,
-                            type: OPTIONS[shapeKey].type,
-                            data: DEFAULT[OPTIONS[shapeKey].type],
+                            type: options[shapeKey].type,
+                            data: defaultValue[options[shapeKey].type],
                             addition: fieldData,
                             shapeKey,
                           },
@@ -290,7 +288,7 @@ export default function Drawer({ id }) {
               }}
               onClick={() => {
                 var finalShape = shapeDataRef.current.map((x) =>
-                  scaleShape(x, false, SCREEN_SIZE[videoSizeRef.current])
+                  scaleShape(x, false, screenSize[videoSizeRef.current])
                 );
                 req = api
                   .SetDrawerConfig({ id, data: finalShape })

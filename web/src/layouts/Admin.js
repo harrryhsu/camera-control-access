@@ -24,6 +24,7 @@ import Traffic from "views/Traffic/Traffic";
 import CachedIcon from "@material-ui/icons/Cached";
 import { IconButton } from "@material-ui/core";
 import Form from "components/Form";
+import TabBuilder from "views/TabBuilder";
 
 let ps;
 
@@ -71,7 +72,7 @@ const Admin = ({ history, ...rest }) => {
           path: `/traffic/${id}`,
           name: metadata.STREAM[id].name,
           icon: Dashboard,
-          component: Traffic,
+          component: () => <TabBuilder pages={metadata.PAGE} id={id} />,
           layout: "/admin",
           isLoaded: true,
           suffix: () => (

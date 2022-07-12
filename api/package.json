@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/app",
+    "test": "nodemon test",
     "build": "webpack"
   },
   "author": "",

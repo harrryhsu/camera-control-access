@@ -1,27 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import MTab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div hidden={value !== index} id={`simple-tabpanel-${index}`} {...other}>
-      {value === index && <Box p={3}>{children}</Box>}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,26 +16,26 @@ const useStyles = makeStyles((theme) => ({
 export default function Tab(props) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
-  const {
-    options,
-    color = "primary",
-    innerStyle = {},
-    onChange = () => {},
-    ...rest
-  } = props;
+  const { options, color = "primary", onChange = () => {}, ...rest } = props;
+  const [loaded, setLoaded] = useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
     onChange();
+    if (!loaded.includes(value)) setLoaded([...loaded, value]);
   };
 
   return (
     <div className={classes.root} {...rest}>
-      <AppBar position="static" color={color}>
+      <AppBar
+        position="static"
+        color={color}
+        style={{ color: "black", backgroundColor: "white" }}
+      >
         <Tabs
           value={value}
           onChange={handleChange}
-          indicatorColor={color == "primary" ? "secondary" : "primary"}
+          indicatorColor={color}
           variant="scrollable"
         >
           {Object.keys(options).map((key, i) => (
@@ -61,10 +43,17 @@ export default function Tab(props) {
           ))}
         </Tabs>
       </AppBar>
-      {Object.keys(options).map((key, i) => (
-        <TabPanel value={value} index={i} key={i} style={innerStyle}>
-          {options[key]}
-        </TabPanel>
+
+      {Object.keys(options).map((key, index) => (
+        <div hidden={value !== index} id={`tabpanel-${index}`} key={index}>
+          {value === index || loaded.includes(index) ? (
+            <Box p={3}>
+              {typeof options[key] == "function"
+                ? options[key]()
+                : options[key]}
+            </Box>
+          ) : null}
+        </div>
       ))}
     </div>
   );

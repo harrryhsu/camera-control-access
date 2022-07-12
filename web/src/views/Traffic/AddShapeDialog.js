@@ -20,16 +20,14 @@ export default function AddShapeDialog(props) {
     existingForm,
     shapeData,
     currentShapeKey,
+    options,
   } = props;
   const [anchor, setAnchor, anchorRef] = useState(null);
   const [shapeKey, setShapeKey, shapeKeyRef] = useState(
     currentShapeKey ?? "placeholder"
   );
-  const {
-    t,
-    metadata: { OPTIONS },
-  } = useContext(UtilContext);
-  const shape = OPTIONS[shapeKey];
+  const { t } = useContext(UtilContext);
+  const shape = options[shapeKey];
 
   useEffect(() => {
     setAnchor(document.getElementById("global-dialog"));
@@ -54,16 +52,16 @@ export default function AddShapeDialog(props) {
               anchor={anchor}
               options={{
                 placeholder: t("Select Shape"),
-                ...Object.keys(OPTIONS)
+                ...Object.keys(options)
                   .filter(
                     (key) =>
                       !(
-                        OPTIONS[key].unique &&
+                        options[key].unique &&
                         shapeData.some((d) => d.key == key)
                       )
                   )
                   .reduce(
-                    (acc, key) => ({ ...acc, [key]: OPTIONS[key].name }),
+                    (acc, key) => ({ ...acc, [key]: options[key].name }),
                     {}
                   ),
               }}
