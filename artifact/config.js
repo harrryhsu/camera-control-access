@@ -143,6 +143,7 @@ const DEFAULT = {
     { x: 150, y: 80 },
   ],
   rect: [{ x: 150, y: 30 }, 200, 200],
+  traffic_light: [{ x: 150, y: 30 }, 200, 200],
 };
 
 const SCREEN_SIZE = [
@@ -185,10 +186,40 @@ const TRANSLATION = {
   Success: "成功",
 };
 
+const PAGE = [
+  {
+    type: "traffic",
+    title: "Traffic",
+    props: {
+      options: OPTIONS,
+      screenSize: SCREEN_SIZE,
+      defaultValue: DEFAULT,
+    },
+  },
+  {
+    type: "setting",
+    title: "Setting",
+    props: {
+      config: TARGET_CONFIG,
+    },
+  },
+  {
+    type: "record",
+    title: "Record",
+    props: {},
+  },
+];
+
+const API_PATH = {
+  drawer: "api/drawer",
+  setting: "api/setting",
+  record: "api/record",
+  image: "api/image",
+};
+
 module.exports = {
-  SCREEN_SIZE,
-  DEFAULT,
-  OPTIONS,
+  PAGE,
   TARGET_CONFIG,
   TRANSLATION,
+  API_PATH,
 };
