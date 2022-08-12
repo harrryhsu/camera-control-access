@@ -46,6 +46,12 @@ function http(method = "GET", url = "", data = null, isStream = false) {
   return wrapper(request);
 }
 
+function buildQuery(query) {
+  if (!query) return "";
+  const params = new URLSearchParams(query);
+  return params.toString();
+}
+
 function jsonUnwrap(req) {
   return req
     .then((res) => res.json().then((data) => ({ data, status: res.status })))
@@ -93,7 +99,7 @@ export const ApiWrapper = () => {
     DeleteStream: (body) => del("stream", body),
     PostSetting: (body) => post("setting", { id, ...body }),
     GetSetting: () => get(`setting?id=${id}`),
-    GetRecord: () => get(`record?id=${id}`),
+    PostRecord: (body) => post(`record`, { id, ...body }),
     GetImageSource: (mid, type) =>
       `${baseUrl}/api/image?id=${id}&mid=${mid}&type=${type}`,
   };

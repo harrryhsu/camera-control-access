@@ -14,8 +14,6 @@ export default function DateTime(props) {
     ...rest
   } = props;
 
-  if (value == null) value = numeric ? 0 : "";
-
   return (
     <InputStyle {...props}>
       <DateTimePicker

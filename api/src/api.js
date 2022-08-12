@@ -102,7 +102,7 @@ const proxyPost = (path) => async (req, res) => {
       data,
       stream,
     })
-    .then(() => okay(res))
+    .then(({ data }) => okay(res, data.data))
     .catch(error);
 };
 
@@ -112,7 +112,6 @@ app.post("/api/drawer", proxyPost(API_PATH.drawer));
 app.get("/api/setting", proxyGet(API_PATH.setting));
 app.post("/api/setting", proxyPost(API_PATH.setting));
 
-app.get("/api/record", proxyGet(API_PATH.record));
 app.post("/api/record", proxyPost(API_PATH.record));
 
 app.get("/api/image", async (req, res) => {

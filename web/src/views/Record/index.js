@@ -2,6 +2,7 @@ import React, { useContext, useRef } from "react";
 import MaterialTable from "material-table";
 import { UtilContext } from "context/UtilContext";
 import translation from "translation/zh_tw";
+import DateTimeRangePicker from "components/CustomInput/DateTimeRangePicker";
 
 export default function Record() {
   const tableRef = useRef();
@@ -19,6 +20,9 @@ export default function Record() {
       field: "created",
       type: "datetime",
       editable: "never",
+      filterComponent: ({ onFilterChanged }) => (
+        <DateTimeRangePicker onChange={(v) => onFilterChanged(1, v)} />
+      ),
     },
     {
       title: translation.global.rego,
@@ -32,6 +36,7 @@ export default function Record() {
       type: "string",
       editable: "never",
       sorting: false,
+      filtering: false,
       render: (data) => (
         <a
           href="#"
@@ -60,7 +65,11 @@ export default function Record() {
         columns={columns}
         data={(query) =>
           api
-            .GetRecord()
+            .PostRecord({
+              limit: query.pageSize,
+              offset: query.pageSize * query.page,
+              filter: query.filters,
+            })
             .then((data) => {
               return {
                 data: data.records.map((entry) => ({
@@ -80,6 +89,7 @@ export default function Record() {
         options={{
           search: false,
           columnsButton: true,
+          filtering: true,
           headerStyle: {
             fontSize: "1.125rem",
           },

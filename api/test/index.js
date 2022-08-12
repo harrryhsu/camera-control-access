@@ -47,7 +47,7 @@ app.post("/api/setting", (req, res) => {
   okay(res);
 });
 
-app.get("/api/record", (req, res) => {
+app.post("/api/record", (req, res) => {
   okay(res, {
     records: [
       {

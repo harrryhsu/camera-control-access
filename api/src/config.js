@@ -160,6 +160,7 @@ const TARGET_CONFIG = {
   rtsp: {
     type: "text",
     label: "RTSP串流",
+    group: "",
   },
   api: {
     type: "text",
@@ -176,6 +177,45 @@ const TARGET_CONFIG = {
     label: "攝影機編號",
   },
   // * Optional
+};
+
+const SETTING_FORM = {
+  testGroup: {
+    type: "group",
+    label: "Test Group",
+    fields: {
+      name: {
+        type: "text",
+        label: "名稱",
+      },
+      rtsp: {
+        type: "text",
+        label: "RTSP串流",
+        group: "",
+      },
+    },
+  },
+  name: {
+    type: "text",
+    label: "名稱",
+  },
+  rtsp: {
+    type: "text",
+    label: "RTSP串流",
+    group: "",
+  },
+  api: {
+    type: "text",
+    label: "IP",
+  },
+  locationIndex: {
+    type: "number",
+    label: "點位編號",
+  },
+  cameraIndex: {
+    type: "number",
+    label: "攝影機編號",
+  },
 };
 
 const TRANSLATION = {
@@ -200,7 +240,7 @@ const PAGE = [
     type: "setting",
     title: "Setting",
     props: {
-      config: TARGET_CONFIG,
+      config: SETTING_FORM,
     },
   },
   {
