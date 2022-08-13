@@ -1,8 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { Switch as MSwitch, TextField } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 import InputStyle from "./InputStyle";
 
 export default function Text(props) {
@@ -14,6 +11,8 @@ export default function Text(props) {
     margin = 2,
     disabled,
     numeric,
+    min,
+    max,
     ...rest
   } = props;
 
@@ -27,7 +26,7 @@ export default function Text(props) {
         type={numeric ? "number" : "text"}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        inputProps={{ style: { minWidth: "200px" } }}
+        inputProps={{ style: { minWidth: "200px" }, min, max }}
         disabled={disabled}
         {...rest}
       />

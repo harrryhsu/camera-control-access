@@ -76,7 +76,27 @@ const FormField = (props) => {
         <Text
           {...fieldProps}
           numeric
-          onChange={(v) => setForm((form) => ({ ...form, [fieldKey]: v }))}
+          min={field.min}
+          max={field.max}
+          value={form[fieldKey] ?? field.default ?? field.min}
+          onChange={(v) =>
+            setForm((form) => ({ ...form, [fieldKey]: parseInt(v) }))
+          }
+        />
+      </GridItem>
+    );
+  if (field.type == "float")
+    return (
+      <GridItem xs={12} sm={12} md={12}>
+        <Text
+          {...fieldProps}
+          numeric
+          min={field.min}
+          max={field.max}
+          value={form[fieldKey] ?? field.default ?? field.min}
+          onChange={(v) =>
+            setForm((form) => ({ ...form, [fieldKey]: parseFloat(v) }))
+          }
         />
       </GridItem>
     );
