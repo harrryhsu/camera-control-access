@@ -96,10 +96,17 @@ app.post("/api/setting", (req, res) => {
 });
 
 app.post("/api/record", (req, res) => {
+  const { mid, timeStart, timeEnd, rego } = req.body;
+  console.log(mid, timeStart, timeEnd, rego);
   okay(res, {
     records: [
       {
         id: 1,
+        rego: "ABC-123",
+        created: new Date(),
+      },
+      {
+        id: 2,
         rego: "ABC-123",
         created: new Date(),
       },

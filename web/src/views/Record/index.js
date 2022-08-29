@@ -63,12 +63,21 @@ export default function Record() {
         tableRef={tableRef}
         title=""
         columns={columns}
-        data={(query) =>
-          api
+        data={(query) => {
+          const mid = query.filters.first((x) => x.column.field == "id")?.value;
+          const created =
+            query.filters.first((x) => x.column.field == "created")?.value ??
+            [];
+          const rego = query.filters.first((x) => x.column.field == "rego")
+            ?.value;
+          return api
             .PostRecord({
               limit: query.pageSize,
               offset: query.pageSize * query.page,
-              filter: query.filters,
+              mid,
+              timeStart: created[0],
+              timeEnd: created[1],
+              rego,
             })
             .then((data) => {
               return {
@@ -83,8 +92,8 @@ export default function Record() {
             .catch((err) => {
               setError(err);
               throw err;
-            })
-        }
+            });
+        }}
         localization={translation.global.localization}
         options={{
           search: false,
