@@ -1,7 +1,6 @@
 const Stream = require("./node-rtsp-stream");
 const ws = require("ws");
 const ffmpegPath = process.env.OS === "WINDOWS_NT" ? "./ffmpeg.exe" : "ffmpeg";
-const storage = require("./storage");
 const sockets = [];
 var streams = [];
 
@@ -10,19 +9,18 @@ const wsServer = new ws.Server({
   perMessageDeflate: false,
 });
 
-const rebuildStream = async () => {
-  const apis = (await storage.getItem("STREAM")) ?? [];
+const rebuildStream = async (apis) => {
   console.log(`Rebuild Streams: ${apis.length} streams`);
   streams.forEach((s) => s.stop());
   sockets.forEach((s) => s.close());
   wsServer.removeAllListeners("connection");
 
   streams = apis.map(
-    (api, i) =>
+    (api) =>
       new Stream({
         name: api.name,
         streamUrl: api.rtsp,
-        path: `/live/${i}`,
+        path: `/live/${api.id}`,
         ffmpegPath,
         wsServer,
         stdio: false,
@@ -68,6 +66,5 @@ module.exports = (express) => {
       .forEach((x) => x.send(data, opts));
   };
 
-  rebuildStream();
-  storage.updateEvent.on("STREAM", rebuildStream);
+  express.on("stream-update", rebuildStream);
 };

@@ -152,31 +152,24 @@ const SCREEN_SIZE = [
 ];
 
 const TARGET_CONFIG = {
-  // ! Important
-  name: {
-    type: "text",
-    label: "名稱",
+  api: "http://localhost:1002/api/stream",
+  addForm: {
+    // ! Important
+    name: {
+      type: "text",
+      label: "名稱",
+    },
+    rtsp: {
+      type: "text",
+      label: "RTSP串流",
+      group: "",
+    },
+    api: {
+      type: "text",
+      label: "IP",
+    },
+    // ! Important
   },
-  rtsp: {
-    type: "text",
-    label: "RTSP串流",
-    group: "",
-  },
-  api: {
-    type: "text",
-    label: "IP",
-  },
-  // ! Important
-  // * Optional
-  locationIndex: {
-    type: "number",
-    label: "點位編號",
-  },
-  cameraIndex: {
-    type: "number",
-    label: "攝影機編號",
-  },
-  // * Optional
 };
 
 const SETTING_FORM = {

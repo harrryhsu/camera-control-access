@@ -1,6 +1,12 @@
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
-import { Switch, Route, Redirect, withRouter } from "react-router-dom";
+import {
+  Switch,
+  Route,
+  Redirect,
+  withRouter,
+  useHistory,
+} from "react-router-dom";
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
@@ -66,13 +72,13 @@ const Admin = ({ history, ...rest }) => {
   const getMetadata = () => api.GetMetadata().then(setMetadata).catch(setError);
 
   useEffect(() => {
-    if (metadata)
+    if (metadata) {
       setRoutes([
-        ...Object.keys(metadata.STREAM).map((id) => ({
-          path: `/traffic/${id}`,
-          name: metadata.STREAM[id].name,
+        ...metadata.STREAM.map((stream) => ({
+          path: `/traffic/${stream.id}`,
+          name: stream.name,
           icon: Dashboard,
-          component: () => <TabBuilder pages={metadata.PAGE} id={id} />,
+          component: () => <TabBuilder pages={metadata.PAGE} id={stream.id} />,
           layout: "/admin",
           isLoaded: true,
           suffix: () => (
@@ -84,10 +90,10 @@ const Admin = ({ history, ...rest }) => {
                   src: () => (
                     <>
                       <Form
-                        existingForm={metadata.STREAM[id]}
+                        existingForm={stream}
                         onUpdate={(form) => {
                           api
-                            .PostStream({ stream: form, id })
+                            .PostStream({ stream: form, id: stream.id })
                             .then(() => {
                               setDialogSrc({ src: null });
                               getMetadata();
@@ -96,12 +102,12 @@ const Admin = ({ history, ...rest }) => {
                         }}
                         onDelete={() =>
                           api
-                            .DeleteStream({ id })
+                            .DeleteStream({ id: stream.id })
                             .then(() => getMetadata())
                             .then(() => setDialogSrc({ src: null }))
                             .catch(setError)
                         }
-                        config={metadata.TARGET_CONFIG}
+                        config={metadata.TARGET_CONFIG.addForm}
                       />
                     </>
                   ),
@@ -121,7 +127,7 @@ const Admin = ({ history, ...rest }) => {
             setDialogSrc({
               src: () => (
                 <Form
-                  config={metadata.TARGET_CONFIG}
+                  config={metadata.TARGET_CONFIG.addForm}
                   onSubmit={(form) => {
                     api
                       .PutStream(form)
@@ -137,6 +143,10 @@ const Admin = ({ history, ...rest }) => {
           },
         },
       ]);
+
+      if (metadata.STREAM.length)
+        history.push("/admin/traffic/" + metadata.STREAM.first().id);
+    }
   }, [metadata]);
 
   useEffect(() => {
@@ -231,6 +241,7 @@ const Admin = ({ history, ...rest }) => {
             <div className={classes.content}>
               <div className={classes.container}>
                 <Switch>
+                  <Route exact path={"/admin"} component={null} />
                   {routes.map((prop, key) => {
                     if (prop.layout === "/admin") {
                       return (
@@ -243,7 +254,9 @@ const Admin = ({ history, ...rest }) => {
                     }
                     return null;
                   })}
-                  <Redirect from="/" to={"/admin/traffic/0"} />
+                  {routes.length == 0 ? (
+                    <Redirect from="/" to={"/admin"} />
+                  ) : null}
                 </Switch>
               </div>
             </div>

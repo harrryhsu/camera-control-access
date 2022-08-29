@@ -7,9 +7,6 @@ services:
     - 1000:1000
     volumes:
     - ./config.js:/work/api/config.js
-    - persist:/work/api/storage
     entrypoint: "node app"
     extra_hosts:
     - "host.docker.internal:host-gateway"
-volumes:
-  persist:

@@ -3,16 +3,9 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const axios = require("axios");
 const config = require("./config");
-const storage = require("./storage");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
-
-if (
-  !config.TARGET_CONFIG.name ||
-  !config.TARGET_CONFIG.rtsp ||
-  !config.TARGET_CONFIG.api
-)
-  throw "Missing config (name|rtsp|api)";
 
 const { API_PATH } = config;
 
@@ -52,38 +45,58 @@ app.use(function (req, res, next) {
   next();
 });
 
+var apis = [];
+var apiMaps = {};
+
+const refreshStream = async () => {
+  const {
+    data: { data },
+  } = await axios.get(config.TARGET_CONFIG.api);
+  apis = data;
+  apiMaps = data.reduce((acc, v) => ({ ...acc, [v.id]: v }), {});
+  server.emit("stream-update", apis);
+};
+
 app.get("/api/metadata", async (req, res) => {
-  const stream = (await storage.getItem("STREAM")) ?? [];
-  okay(res, { ...config, STREAM: stream });
+  refreshStream();
+  okay(res, { ...config, STREAM: apis });
 });
 
-app.put("/api/stream", async (req, res) => {
+app.put("/api/stream", (req, res) => {
   const stream = req.body;
-  const existing = (await storage.getItem("STREAM")) ?? [];
-  await storage.setItem("STREAM", [...existing, stream]);
-  okay(res);
+  axios
+    .put(config.TARGET_CONFIG.api, { ...stream, id: uuidv4() })
+    .then(() => {
+      okay(res);
+      refreshStream().catch(console.log);
+    })
+    .catch(error);
 });
 
-app.post("/api/stream", async (req, res) => {
-  const { stream, id } = req.body;
-  const existing = (await storage.getItem("STREAM")) ?? [];
-  existing[id] = stream;
-  await storage.setItem("STREAM", existing);
-  okay(res);
+app.post("/api/stream", (req, res) => {
+  axios
+    .post(config.TARGET_CONFIG.api, req.body)
+    .then(() => {
+      okay(res);
+      refreshStream().catch(console.log);
+    })
+    .catch(error);
 });
 
-app.delete("/api/stream", async (req, res) => {
+app.delete("/api/stream", (req, res) => {
   const { id } = req.body;
-  const existing = (await storage.getItem("STREAM")) ?? [];
-  existing.splice(id, 1);
-  await storage.setItem("STREAM", existing);
-  okay(res);
+  axios
+    .delete(config.TARGET_CONFIG.api, { data: { id } })
+    .then(() => {
+      okay(res);
+      refreshStream().catch(console.log);
+    })
+    .catch(error);
 });
 
 const proxyGet = (path) => async (req, res) => {
   const { id } = req.query;
-  const streams = await storage.getItem("STREAM");
-  const stream = streams[id];
+  const stream = apiMaps[id];
   if (!stream) return error(res)("Stream id not found");
   axios
     .get(`http://${stream.api}/${path}?id=${id}`)
@@ -92,16 +105,11 @@ const proxyGet = (path) => async (req, res) => {
 };
 
 const proxyPost = (path) => async (req, res) => {
-  const { id, data } = req.body;
-  const streams = await storage.getItem("STREAM");
-  const stream = streams[id];
+  const { id } = req.body;
+  const stream = apiMaps[id];
   if (!stream) return error(res)("Stream id not found");
   axios
-    .post(`http://${stream.api}/${path}`, {
-      id,
-      data,
-      stream,
-    })
+    .post(`http://${stream.api}/${path}`, req.body)
     .then(({ data }) => okay(res, data.data))
     .catch(error);
 };
@@ -116,8 +124,7 @@ app.post("/api/record", proxyPost(API_PATH.record));
 
 app.get("/api/image", async (req, res) => {
   const { id, mid, type } = req.query;
-  const streams = await storage.getItem("STREAM");
-  const stream = streams[id];
+  const stream = apiMaps[id];
   if (!stream) return error(res)("Stream id not found");
   axios
     .get(
@@ -142,6 +149,12 @@ app.use((err, req, res, next) => {
   error(res)(err);
 });
 
-module.exports = app.listen(1000, () =>
+setTimeout(() => {
+  refreshStream().catch(console.log);
+}, 500);
+
+const server = app.listen(1000, () =>
   console.log(`API/WS server listening on ${1000}`)
 );
+
+module.exports = server;

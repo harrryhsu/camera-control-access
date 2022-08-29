@@ -25,24 +25,72 @@ app.use(bodyParser.urlencoded({ limit: "200mb", extended: true }));
 
 var config = {};
 
+var apis = [
+  {
+    id: "1",
+    name: "Test 1",
+    rtsp: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4",
+    api: "localhost:1002",
+  },
+  {
+    id: "2",
+    name: "Test 2",
+    rtsp: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4",
+    api: "localhost:1002",
+  },
+  {
+    id: "3",
+    name: "Test 3",
+    rtsp: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4",
+    api: "localhost:1002",
+  },
+];
+
+app.get("/api/stream", (req, res) => {
+  okay(res, apis);
+});
+
+app.post("/api/stream", (req, res) => {
+  const { id, stream } = req.body;
+  apis
+    .filter((x) => x.id == id)
+    .forEach((x) => {
+      x.name = stream.name;
+      x.rtsp = stream.rtsp;
+      x.api = stream.api;
+    });
+  okay(res);
+});
+
+app.put("/api/stream", (req, res) => {
+  apis.push(req.body);
+  okay(res, apis);
+});
+
+app.delete("/api/stream", (req, res) => {
+  const { id } = req.body;
+  apis = apis.filter((x) => x.id != id);
+  okay(res, apis);
+});
+
 app.get("/api/drawer", (req, res) => {
-  const id = parseInt(req.query.id);
+  const { id } = req.query;
   okay(res, config[id]?.drawer ?? []);
 });
 
 app.post("/api/drawer", (req, res) => {
-  const { data, stream, id } = req.body;
+  const { data, id } = req.body;
   config[id] = { ...(config[id] ?? {}), drawer: data };
   okay(res);
 });
 
 app.get("/api/setting", (req, res) => {
-  const id = parseInt(req.query.id);
+  const { id } = req.query;
   okay(res, config[id]?.setting ?? {});
 });
 
 app.post("/api/setting", (req, res) => {
-  const { data, stream, id } = req.body;
+  const { data, id } = req.body;
   config[id] = { ...(config[id] ?? {}), setting: data };
   okay(res);
 });
