@@ -73,52 +73,52 @@ const Admin = ({ history, ...rest }) => {
 
   useEffect(() => {
     if (metadata) {
-      setRoutes([
-        ...metadata.STREAM.map((stream) => ({
-          path: `/traffic/${stream.id}`,
-          name: stream.name,
-          icon: Dashboard,
-          component: () => <TabBuilder pages={metadata.PAGE} id={stream.id} />,
-          layout: "/admin",
-          isLoaded: true,
-          suffix: () => (
-            <IconButton
-              style={{ position: "absolute", right: 0, top: 0 }}
-              onClick={(e) => {
-                e.preventDefault();
-                setDialogSrc({
-                  src: () => (
-                    <>
-                      <Form
-                        existingForm={stream}
-                        onUpdate={(form) => {
-                          api
-                            .PostStream({ stream: form, id: stream.id })
-                            .then(() => {
-                              setDialogSrc({ src: null });
-                              getMetadata();
-                            })
-                            .catch(setError);
-                        }}
-                        onDelete={() =>
-                          api
-                            .DeleteStream({ id: stream.id })
-                            .then(() => getMetadata())
-                            .then(() => setDialogSrc({ src: null }))
-                            .catch(setError)
-                        }
-                        config={metadata.TARGET_CONFIG.addForm}
-                      />
-                    </>
-                  ),
-                });
-              }}
-            >
-              <CachedIcon />
-            </IconButton>
-          ),
-        })),
-        {
+      const routes = metadata.STREAM.map((stream) => ({
+        path: `/traffic/${stream.id}`,
+        name: stream.name,
+        icon: Dashboard,
+        component: () => <TabBuilder pages={metadata.PAGE} id={stream.id} />,
+        layout: "/admin",
+        isLoaded: true,
+        suffix: () => (
+          <IconButton
+            style={{ position: "absolute", right: 0, top: 0 }}
+            onClick={(e) => {
+              e.preventDefault();
+              setDialogSrc({
+                src: () => (
+                  <>
+                    <Form
+                      existingForm={stream}
+                      onUpdate={(form) => {
+                        api
+                          .PostStream({ stream: form, id: stream.id })
+                          .then(() => {
+                            setDialogSrc({ src: null });
+                            getMetadata();
+                          })
+                          .catch(setError);
+                      }}
+                      onDelete={() =>
+                        api
+                          .DeleteStream({ id: stream.id })
+                          .then(() => getMetadata())
+                          .then(() => setDialogSrc({ src: null }))
+                          .catch(setError)
+                      }
+                      config={metadata.TARGET_CONFIG.addForm}
+                    />
+                  </>
+                ),
+              });
+            }}
+          >
+            <CachedIcon />
+          </IconButton>
+        ),
+      }));
+      if (routes.length < 10)
+        routes.push({
           name: t("Add"),
           icon: Dashboard,
           layout: "/admin",
@@ -141,8 +141,8 @@ const Admin = ({ history, ...rest }) => {
               ),
             });
           },
-        },
-      ]);
+        });
+      setRoutes(routes);
 
       if (metadata.STREAM.length)
         history.push("/admin/traffic/" + metadata.STREAM.first().id);
