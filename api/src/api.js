@@ -86,7 +86,7 @@ app.post("/api/stream", (req, res) => {
 app.delete("/api/stream", (req, res) => {
   const { id } = req.body;
   axios
-    .delete(config.TARGET_CONFIG.api, { data: { id } })
+    .delete(config.TARGET_CONFIG.streamApi, { data: { id } })
     .then(() => {
       okay(res);
       refreshStream().catch(console.log);
