@@ -99,6 +99,8 @@ export const ApiWrapper = () => {
     DeleteStream: (body) => del("stream", body),
     PostSetting: (body) => post("setting", { id, ...body }),
     GetSetting: () => get(`setting?id=${id}`),
+    GetSystem: () => get("system"),
+    PostSystem: (body) => post("system", body),
     PostRecord: (body) => post(`record`, { id, ...body }),
     GetImageSource: (mid, type) =>
       `${baseUrl}/api/image?id=${id}&mid=${mid}&type=${type}`,

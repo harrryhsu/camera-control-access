@@ -95,6 +95,18 @@ app.post("/api/setting", (req, res) => {
   okay(res);
 });
 
+var systemData = {};
+
+app.get("/api/system", (req, res) => {
+  okay(res, systemData);
+});
+
+app.post("/api/system", (req, res) => {
+  systemData = req.body;
+  console.log(systemData);
+  okay(res);
+});
+
 app.post("/api/record", (req, res) => {
   const { mid, timeStart, timeEnd, rego } = req.body;
   console.log(mid, timeStart, timeEnd, rego);

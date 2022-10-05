@@ -145,8 +145,6 @@ export default function Form(props) {
   const [anchor, setAnchor, anchorRef] = useState(null);
   const { t } = useContext(UtilContext);
 
-  console.log(form);
-
   const defaultForm = () =>
     Object.keys(config)
       .map((key) => ({ key, config: config[key] }))

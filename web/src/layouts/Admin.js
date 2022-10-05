@@ -142,6 +142,32 @@ const Admin = ({ history, ...rest }) => {
             });
           },
         });
+      routes.push({
+        name: t("System"),
+        icon: Dashboard,
+        layout: "/admin",
+        isLoaded: true,
+        onClick: async () => {
+          const systemForm = (await api.GetSystem().catch(setError)) ?? {};
+          setDialogSrc({
+            src: () => (
+              <Form
+                existingForm={systemForm}
+                config={metadata.TARGET_CONFIG.systemForm}
+                onSubmit={(form) => {
+                  api
+                    .PostSystem(form)
+                    .then(() => {
+                      setDialogSrc({ src: null });
+                      getMetadata();
+                    })
+                    .catch(setError);
+                }}
+              />
+            ),
+          });
+        },
+      });
       setRoutes(routes);
 
       if (metadata.STREAM.length)

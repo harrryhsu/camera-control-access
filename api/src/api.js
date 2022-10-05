@@ -51,7 +51,7 @@ var apiMaps = {};
 const refreshStream = async () => {
   const {
     data: { data },
-  } = await axios.get(config.TARGET_CONFIG.api);
+  } = await axios.get(config.TARGET_CONFIG.streamApi);
   apis = data;
   apiMaps = data.reduce((acc, v) => ({ ...acc, [v.id]: v }), {});
   server.emit("stream-update", apis);
@@ -65,7 +65,7 @@ app.get("/api/metadata", async (req, res) => {
 app.put("/api/stream", (req, res) => {
   const stream = req.body;
   axios
-    .put(config.TARGET_CONFIG.api, { ...stream, id: uuidv4() })
+    .put(config.TARGET_CONFIG.streamApi, { ...stream, id: uuidv4() })
     .then(() => {
       okay(res);
       refreshStream().catch(console.log);
@@ -75,7 +75,7 @@ app.put("/api/stream", (req, res) => {
 
 app.post("/api/stream", (req, res) => {
   axios
-    .post(config.TARGET_CONFIG.api, req.body)
+    .post(config.TARGET_CONFIG.streamApi, req.body)
     .then(() => {
       okay(res);
       refreshStream().catch(console.log);
@@ -91,6 +91,21 @@ app.delete("/api/stream", (req, res) => {
       okay(res);
       refreshStream().catch(console.log);
     })
+    .catch(error);
+});
+
+app.get("/api/system", (req, res) => {
+  axios
+    .get(config.TARGET_CONFIG.systemApi)
+    .then(({ data }) => okay(res, data.data))
+    .catch(error);
+});
+
+app.post("/api/system", (req, res) => {
+  console.log(req.body);
+  axios
+    .post(config.TARGET_CONFIG.systemApi, req.body)
+    .then(() => okay(res))
     .catch(error);
 });
 
@@ -119,6 +134,9 @@ app.post("/api/drawer", proxyPost(API_PATH.drawer));
 
 app.get("/api/setting", proxyGet(API_PATH.setting));
 app.post("/api/setting", proxyPost(API_PATH.setting));
+
+app.get("/api/system", proxyGet(API_PATH.system));
+app.post("/api/system", proxyPost(API_PATH.system));
 
 app.post("/api/record", proxyPost(API_PATH.record));
 

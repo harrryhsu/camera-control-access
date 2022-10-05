@@ -152,7 +152,8 @@ const SCREEN_SIZE = [
 ];
 
 const TARGET_CONFIG = {
-  api: "http://localhost:1002/api/stream",
+  streamApi: "http://localhost:1002/api/stream",
+  systemApi: "http://localhost:1002/api/system",
   addForm: {
     // ! Important
     name: {
@@ -169,6 +170,21 @@ const TARGET_CONFIG = {
       label: "IP",
     },
     // ! Important
+  },
+  systemForm: {
+    name: {
+      type: "text",
+      label: "名稱",
+    },
+    rtsp: {
+      type: "text",
+      label: "RTSP串流",
+      group: "",
+    },
+    api: {
+      type: "text",
+      label: "IP",
+    },
   },
 };
 
@@ -217,6 +233,7 @@ const TRANSLATION = {
   Delete: "刪除",
   Update: "更新",
   Success: "成功",
+  System: "系統",
 };
 
 const PAGE = [
@@ -248,6 +265,7 @@ const API_PATH = {
   setting: "api/setting",
   record: "api/record",
   image: "api/image",
+  system: "api/system",
 };
 
 module.exports = {
