@@ -152,6 +152,7 @@ const SCREEN_SIZE = [
 ];
 
 const TARGET_CONFIG = {
+  max: 5,
   streamApi: "http://localhost:1002/api/stream",
   systemApi: "http://localhost:1002/api/system",
   addForm: {

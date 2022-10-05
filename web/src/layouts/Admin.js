@@ -117,7 +117,7 @@ const Admin = ({ history, ...rest }) => {
           </IconButton>
         ),
       }));
-      if (routes.length < 10)
+      if (routes.length < metadata.TARGET_CONFIG.max)
         routes.push({
           name: t("Add"),
           icon: Dashboard,
@@ -154,7 +154,7 @@ const Admin = ({ history, ...rest }) => {
               <Form
                 existingForm={systemForm}
                 config={metadata.TARGET_CONFIG.systemForm}
-                onSubmit={(form) => {
+                onUpdate={(form) => {
                   api
                     .PostSystem(form)
                     .then(() => {
