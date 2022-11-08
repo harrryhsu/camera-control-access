@@ -1,70 +1,84 @@
-const Stream = require("./node-rtsp-stream");
-const ws = require("ws");
-const ffmpegPath = process.env.OS === "WINDOWS_NT" ? "./ffmpeg.exe" : "ffmpeg";
-const sockets = [];
-var streams = [];
+const child_process = require("child_process");
+const Events = require("events");
 
-const wsServer = new ws.Server({
-  noServer: true,
-  perMessageDeflate: false,
-});
+class Stream extends Events {
+  constructor(options) {
+    super();
+    this.options = options;
+    this.path = options.path;
+    this.ws = options.ws;
+    this.start();
+  }
 
-const rebuildStream = async (apis) => {
-  console.log(`Rebuild Streams: ${apis.length} streams`);
-  streams.forEach((s) => s.stop());
-  sockets.forEach((s) => s.close());
-  wsServer.removeAllListeners("connection");
+  start() {
+    const { url, ws, ffmpegPath = "ffmpeg", path, log = false } = this.options;
+    this.stop();
 
-  streams = apis.map(
-    (api) =>
-      new Stream({
-        name: api.name,
-        streamUrl: api.rtsp,
-        path: `/live/${api.id}`,
-        ffmpegPath,
-        wsServer,
-        stdio: false,
-      })
-  );
+    this.lastFrame = new Date();
+    this.validator = setInterval(() => {
+      var limit = new Date();
+      limit.setSeconds(limit.getSeconds() - 10);
+      if (this.lastFrame < limit) {
+        console.log("Last frame is more than 10 secs ago, restarting...");
+        this.start();
+      }
+    }, 10000);
 
-  wsServer.on("connection", (socket, request) => {
-    if (!streams.some((s) => request.url.startsWith(s.path)))
-      return socket.close();
-
-    sockets.push(socket);
-    socket.reqUrl = request.url;
-
-    console.log(`New WebSocket Connection (` + sockets.length + " total)");
-
-    streams
-      .filter((s) => request.url.startsWith(s.path))
-      .forEach((stream) => stream.start());
-
-    socket.on("close", () => {
-      console.log(`Disconnected WebSocket (` + sockets.length + " total)");
-      const index = sockets.indexOf(socket);
-      if (index !== -1) sockets.splice(index, 1);
-      streams
-        .filter(
-          (stream) => !sockets.some((s) => s.reqUrl.startsWith(stream.path))
-        )
-        .forEach((stream) => stream.stop());
+    this.spawnOptions = [
+      "-y",
+      "-rtsp_transport",
+      "tcp",
+      "-i",
+      url,
+      "-r",
+      "10",
+      "-probesize",
+      "32",
+      "-analyzeduration",
+      "0",
+      "-coder",
+      "0",
+      "-bf",
+      "0",
+      "-b:v",
+      "1M",
+      "-vf",
+      "scale=600:400",
+      "-x264-params",
+      "keyint=10:scenecut=0",
+      "-profile:v",
+      "baseline",
+      "-preset",
+      "ultrafast",
+      "-tune",
+      "zerolatency",
+      "-c:v",
+      "libx264",
+      "-f",
+      "h264",
+      "-",
+    ];
+    this.stream = child_process.spawn(ffmpegPath, this.spawnOptions, {
+      detached: false,
     });
-  });
-};
-
-module.exports = (express) => {
-  express.on("upgrade", (request, socket, head) => {
-    wsServer.handleUpgrade(request, socket, head, (websocket) => {
-      wsServer.emit("connection", websocket, request);
+    this.stream.stdout.on("data", (data) => {
+      this.lastFrame = new Date();
+      ws.broadcast(data, path);
     });
-  });
+    this.stream.stderr.on("data", (data) => {
+      if (log) console.log(data.toString());
+      return this.emit("ffmpegData", data);
+    });
+    this.stream.on("exit", (code, signal) => {
+      if (code) console.error("RTSP stream exited with error: " + code);
+      return this.emit("exit");
+    });
+  }
 
-  wsServer.broadcast = function (data, path, opts) {
-    sockets
-      .filter((s) => s.readyState === 1 && s.reqUrl?.startsWith(path))
-      .forEach((x) => x.send(data, opts));
-  };
+  stop() {
+    if (this.stream) this.stream.kill();
+    if (this.validator) clearInterval(this.validator);
+  }
+}
 
-  express.on("stream-update", rebuildStream);
-};
+module.exports = Stream;

@@ -10,7 +10,6 @@ import AddIcon from "@material-ui/icons/Add";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import { v4 as uuidv4 } from "uuid";
 import { Fab, IconButton, Tooltip } from "@material-ui/core";
-import WebRTCPlayer from "./WebRTCPlayer";
 import {
   DetectionLine,
   DetectionLineWithDirection,
@@ -20,6 +19,7 @@ import {
 
 import { Stage, Layer } from "react-konva/lib/ReactKonvaCore";
 import AddShapeDialog from "./AddShapeDialog";
+import BroadwayPlayer from "./BroadwayPlayer";
 
 const fullscreen = (elem) => {
   if (elem.requestFullscreen) {
@@ -153,13 +153,11 @@ export default function Drawer(props) {
       <GridContainer style={{ minHeight: "500px" }}>
         <GridItem xs={12} sm={12} md={12} id="traffic-container">
           <div style={{ position: "relative", margin: "50px auto 20px auto" }}>
-            <WebRTCPlayer
+            <BroadwayPlayer
               id="drawer"
               url={api.WebRTCUrl(id)}
-              style={{
-                width: `${currentSize[0]}px`,
-                height: `${currentSize[1]}px`,
-              }}
+              width={currentSize[0]}
+              height={currentSize[1]}
             />
             <Stage
               id="test"
